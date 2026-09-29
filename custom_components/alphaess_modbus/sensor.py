@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -138,8 +139,18 @@ async def async_setup_entry(
     entities: list[SensorEntity] = [
         AlphaESSSensor(coordinator, entry, reg) for reg in SENSOR_REGISTERS
     ]
-    entities += [
+    calculated = [
         AlphaESSCalculatedSensor(coordinator, entry, defn) for defn in CALCULATED_SENSORS
+    ]
+    entities += calculated
+    sources = {entity._defn.key: entity for entity in calculated}
+    entities += [
+        AlphaESSFilteredPowerSensor(coordinator, entry, key, name, sources)
+        for key, name in (
+            ("current_house_load_filtered", "Current House Load Filtered"),
+            ("current_pv_production_filtered", "Current PV Production Filtered"),
+            ("excess_power", "Excess Power"),
+        )
     ]
     entities.append(AlphaESSEmsVersionSensor(coordinator, entry))
     entities.append(AlphaESSDispatchCountdownSensor(coordinator, entry))
@@ -255,6 +266,78 @@ class AlphaESSCalculatedSensor(CoordinatorEntity[AlphaESSCoordinator], SensorEnt
             return max(0, int(remaining_kwh / abs(power_w) * 1000.0 * 60.0))
 
         return None
+
+
+class AlphaESSFilteredPowerSensor(CoordinatorEntity[AlphaESSCoordinator], SensorEntity):
+    """Passive, source-change lowpass sensors; never used by dispatch control.
+
+    Hillview uses HA's lowpass with time_constant=5 (a sample weight, not
+    seconds). Each entity keeps its own filter state so listener order and
+    disabling another entity cannot affect its result.
+    """
+
+    _attr_has_entity_name = True
+    _attr_native_unit_of_measurement = "W"
+    _attr_device_class = SensorDeviceClass.POWER
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(
+        self,
+        coordinator: AlphaESSCoordinator,
+        entry: ConfigEntry,
+        key: str,
+        name: str,
+        sources: dict[str, AlphaESSCalculatedSensor],
+    ) -> None:
+        super().__init__(coordinator)
+        self._key = key
+        self._sources = {
+            source_key: sources[source_key]
+            for source_key in ("current_house_load", "current_pv_production")
+            if key == "excess_power" or key == f"{source_key}_filtered"
+        }
+        self._previous: dict[str, float] = {}
+        self._filtered: dict[str, float] = {}
+        self._attr_unique_id = f"{entry.entry_id}_{key}"
+        self._attr_name = name
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)})
+
+    def _sample(self) -> None:
+        for key, source in self._sources.items():
+            value = source.native_value if self.coordinator.last_update_success else None
+            if value is None or not math.isfinite(float(value)):
+                self._previous.pop(key, None)
+                self._filtered.pop(key, None)
+                continue
+            value = float(value)
+            if self._previous.get(key) != value:
+                previous = self._filtered.get(key, value)
+                self._filtered[key] = round(0.8 * previous + 0.2 * value, 2)
+                self._previous[key] = value
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self._sample()
+
+    def _handle_coordinator_update(self) -> None:
+        self._sample()
+        super()._handle_coordinator_update()
+
+    @property
+    def available(self) -> bool:
+        return super().available and len(self._filtered) == len(self._sources)
+
+    @property
+    def native_value(self) -> float | None:
+        if not self.available:
+            return None
+        if self._key == "excess_power":
+            return max(
+                0,
+                int(self._filtered["current_pv_production"])
+                - round(self._filtered["current_house_load"]),
+            )
+        return next(iter(self._filtered.values()))
 
 
 class AlphaESSCombinedSensor(CoordinatorEntity[AlphaESSCoordinator], SensorEntity):

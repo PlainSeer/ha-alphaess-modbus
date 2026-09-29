@@ -76,3 +76,18 @@ from the next valid value. They follow source-value changes, not every unrelated
 coordinator notification. Repeated reads of native_value do not advance them.
 They do not restore recorder history. Excess power is an estimate, not an export
 command or an inverter capacity guarantee.
+
+## First tranche validation
+
+12 entity tests pass with Python 3.12.14, Home Assistant 2024.12.5 and pymodbus
+3.7.4. These use real HA entity classes with an in-memory coordinator; they do
+not start a full HA instance or connect to an inverter. Coverage includes source
+changes, repeated callbacks, listener ordering, AC PV, source loss/recovery,
+coordinator failure, nonfinite data, work mode 2 and unique IDs/setup.
+The same test command is included in the PR workflow. This is not certification
+against the user's current HA runtime. Existing HACS/hassfest workflows remain.
+
+Run: `python -m pytest tests/test_filtered_power.py -q` after installing the pinned
+dependencies in `.github/workflows/test.yml`. No release/version bump is included;
+the branch is for review, not deployment. Revert the sensor commit to remove all
+three additions without changing any existing control implementation.
