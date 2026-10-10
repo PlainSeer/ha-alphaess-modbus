@@ -24,6 +24,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import DAILY_ENERGY_SENSORS, DOMAIN, SENSOR_REGISTERS, ModbusSensorDef
 from .coordinator import AlphaESSCoordinator
+from .house_energy import AlphaESSHouseEnergySensor
 
 
 @dataclass
@@ -163,9 +164,14 @@ async def async_setup_entry(
             ("force_import",      "Force Import Countdown",      "mdi:transmission-tower-import"),
         ]
     ]
-    entities += [
+    daily = [
         AlphaESSDailySensor(coordinator, entry, key, source_key, ac_power_key)
         for key, source_key, ac_power_key in DAILY_ENERGY_SENSORS
+    ]
+    entities += daily
+    entities += [
+        AlphaESSHouseEnergySensor(coordinator, entry),
+        AlphaESSHouseEnergySensor(coordinator, entry, {s._attr_translation_key: s for s in daily}),
     ]
     async_add_entities(entities)
 
