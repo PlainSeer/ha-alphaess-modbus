@@ -1,10 +1,12 @@
 # Passive house-energy and battery-full indicators
 
-These additions use data already present in the coordinator. They make no Modbus requests and issue no inverter commands. Existing entities, daily calculations, PredBat helpers and controls are unchanged.
+These additions use data already present in the coordinator. They make no Modbus requests and issue no inverter commands. Other entities, daily calculations, PredBat helpers and controls are unchanged.
 
-## Battery Full (SoC)
+## Battery Full
 
-On means reported SoC equals 100%; off means a valid lower percentage. Missing, non-finite or out-of-range data is unavailable. This deliberately does not interpret battery status flags as BMS charge completion or completion of balancing.
+On means the existing raw `battery_status` is exactly `1` (charging not permitted, discharging permitted), matching Hillview’s battery-full interpretation clarified by Axel Koegler. Other documented statuses (`0`, `256`, `257`, `512`, `513`) are off; missing, malformed or unrecognised statuses and coordinator failure make it unavailable. This uses the existing 0x0103 reading and its unchanged polling interval. It does not infer full from SoC.
+
+This corrects the former Battery Full (SoC) indicator in place: the unique ID retains `_battery_full_soc`, preserving existing entity IDs and custom names. The default display name becomes Battery Full. Existing Battery Status text labels remain unchanged for compatibility; this indicator compares the raw numeric value, not those labels. It is a passive indication, not a charging command or an independent guarantee of cell balancing.
 
 ## Today's House Energy
 
@@ -24,7 +26,7 @@ Both energy entities are estimates: asynchronous readings, counter resolution an
 
 Keep the existing PredBat house-energy integration helper and daily utility meter. No configuration is migrated, no automation consumes these new entities, and installing this release does not migrate PredBat to these sensors. Compare recorded values over complete days before separately deciding whether to change any consumer. The battery indicator does not control charging, Hold/Freeze, EV charging, export or Demand/ECO.
 
-Tests exercise the real HA sensor classes with an in-memory coordinator: counter balance/reset, partial refresh, invalid inputs, AC-PV accounting/gaps, restore precision, midnight baselines and SoC boundaries. They do not connect to an inverter or certify live operation.
+Tests exercise the real HA sensor classes with an in-memory coordinator: counter balance/reset, partial refresh, invalid inputs, AC-PV accounting/gaps, restore precision, midnight baselines, battery status codes and registry identity. They do not connect to an inverter or certify live operation.
 
 ## House Load Energy Today (Accumulated)
 
