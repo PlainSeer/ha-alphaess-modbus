@@ -1,5 +1,27 @@
 # Changelog
 
+### v1.15.0
+
+#### New sensors
+
+- Current House Load Filtered: smooths the existing house-load calculation.
+- Current PV Production Filtered: smooths the existing PV-production calculation.
+- Excess Power: filtered PV minus filtered house load, clamped at zero; an estimate for observation, not an inverter command.
+
+#### Compatibility
+
+- No changes to Modbus register addresses, mappings, reads, writes or polling.
+- Existing entity identities, raw calculations, configuration entries and PredBat-facing entities are preserved. Existing inverter controls are unchanged.
+- Filters initialize from current values after restart and reset after unavailable input; filter history is not restored.
+- This is the first passive Hillview-inspired addition, not full Hillview parity. Battery-full, house-energy and Hold-monitoring changes are not included.
+
+#### Validation
+
+- All 12 isolated sensor tests pass on Home Assistant 2026.10.0 / Python 3.14 and Home Assistant 2024.12.5 / Python 3.12.
+- HACS and hassfest checks pass. These tests use an in-memory coordinator and do not connect to an inverter or verify live operating modes.
+
+---
+
 ### v1.14.0
 
 #### What's new
