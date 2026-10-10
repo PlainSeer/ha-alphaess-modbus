@@ -26,7 +26,7 @@ Keep the existing PredBat house-energy integration helper and daily utility mete
 
 Tests exercise the real HA sensor classes with an in-memory coordinator: counter balance/reset, partial refresh, invalid inputs, AC-PV accounting/gaps, restore precision, midnight baselines and SoC boundaries. They do not connect to an inverter or certify live operation.
 
-## House Load Energy Today
+## House Load Energy Today (Accumulated)
 
 Separate increment-only daily estimate, using the existing raw Current House Load calculation rather than the daily counter balance. Adds positive power × elapsed seconds / 3,600,000 using the previous sample (left integration). Negative calculated power contributes zero. It updates on coordinator callbacks even if the power value remains constant; it issues no new Modbus requests and does not use filtered power.
 

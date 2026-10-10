@@ -53,11 +53,11 @@ These are **passive HA-side additions using data already read by the integration
 
 These are comparison sensors for future evaluation. They do not replace PredBat's load helpers, alter existing controls, or change any Modbus reads, writes, mappings or polling. See [calculation and limitations](docs/passive-house-energy.md) before using the energy estimates.
 
-### House Load Energy Today (unreleased)
+### House Load Energy Today (Accumulated) (unreleased)
 
 A separate daily kWh counter integrates the existing raw Current House Load calculation over time. It only increases or stays unchanged within a day and resets at local midnight using Home Assistant's timezone. Same-day totals restore after restart. It does not replace Today's House Energy, which remains the counter-balance comparison sensor, or any existing PredBat helper.
 
-The first day starts when enabled. Missing/stale readings and gaps longer than 60 seconds are omitted and flagged as `incomplete_day`; downtime cannot be reconstructed. See [calculation details](docs/passive-house-energy.md#house-load-energy-today).
+The first day starts when enabled. Missing/stale readings and gaps longer than 60 seconds are omitted and flagged as `incomplete_day`; downtime cannot be reconstructed. See [calculation details](docs/passive-house-energy.md#house-load-energy-today-accumulated).
 
 ### Not included
 
