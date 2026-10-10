@@ -1,5 +1,7 @@
 # AlphaESS Modbus TCP - Home Assistant Integration
 
+<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/custom_components/alphaess_modbus/brand/icon.png" alt="AlphaESS icon" width="96" height="96">
+
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/release/PlainSeer/ha-alphaess-modbus.svg)](https://github.com/PlainSeer/ha-alphaess-modbus/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)

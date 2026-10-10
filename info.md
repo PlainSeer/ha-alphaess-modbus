@@ -1,35 +1,41 @@
-# AlphaESS Modbus TCP
+# AlphaESS Modbus TCP — PlainSeer fork
 
-Local Home Assistant integration for AlphaESS solar inverters (SMILE-M5, SMILE5, SMILE-G3, SMILE-Hi, SMILE-B3 series) via Modbus TCP.
+![AlphaESS icon](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/custom_components/alphaess_modbus/brand/icon.png)
 
-No cloud dependency. All communication is direct to the inverter on your LAN.
+Local Home Assistant integration for AlphaESS inverters via Modbus TCP, without a cloud dependency.
 
-## Features
+## USE AT YOUR OWN RISK
 
-- **90+ sensor entities enabled by default** (143 total) — real-time power flows, battery SoC/SoH, temperatures, energy totals, grid safety parameters, faults & warnings
-- **Force Charging** — charge battery from grid at configurable power and duration
-- **Force Discharging** — discharge battery at configurable power and duration
-- **Force Export** — export to grid at configurable power
-- **Excess Export** — prioritise grid export over battery charging (reduces clipping)
-- **Charging/Discharging time periods** — configure charge and discharge windows
-- **Dispatch mode selector** — SoC Control, Load Following, Maximise Output, and more
-- **Max Feed to Grid** — set grid export limit as % of PV capacity
-- **Date/Time sync** — sync inverter clock to HA system time
+Unofficial community-maintained software, supplied without warranty. The integration retains inherited controls that write to your inverter. Incorrect settings can cause unexpected operation, financial loss or equipment damage. Keep a restorable backup. Passing tests does not certify hardware safety.
 
-## Requirements
+## About this fork
 
-- AlphaESS inverter with Modbus TCP enabled (port 502)
-- Inverter reachable via LAN
-- Home Assistant 2024.10 or newer
+Continues Senalse's v1.14.0 integration, with selected passive improvements inspired by Axel Koegler's Hillview package. Original authors retain full credit. This is not an official AlphaESS integration or full Hillview parity.
 
-## Setup
+## Changes added by this fork
 
-1. In Home Assistant, go to **Settings → Devices & Services → Add Integration**
-2. Search for **AlphaESS Modbus TCP**
-3. Enter your inverter's IP address (use a DHCP reservation for a stable address)
-4. Leave port as `502` and slave ID as `85` unless you changed these on the inverter
-5. Click **Submit**
+### v1.15.0
+
+- Current House Load Filtered: smooths the existing house-load value.
+- Current PV Production Filtered: smooths the existing PV-production value.
+- Excess Power: filtered PV minus filtered house load, clamped at zero; an estimate, not an export command.
+
+### v1.16.0
+
+- Battery Full (SoC): an additional on/off indicator for reported SoC exactly 100%. It does not replace the existing SoC sensor or confirm BMS charging/balancing completion.
+- Today's House Energy: existing daily import minus export plus PV minus battery charged plus discharged; AC PV included once.
+- House Energy Since Tracking: accumulates from zero when first enabled; not lifetime consumption. Downtime can leave missing AC-PV history.
+
+No Modbus register addresses, mappings, reads, writes or polling were changed by these additions. Existing entities and controls are preserved. Keep existing PredBat house-energy helpers while comparing the estimates; nothing migrates automatically.
+
+Hillview 11.2 import pause/resume and 11.3 Cutoff SoC Hold monitoring changes are not adopted.
+
+## Documentation and installation
+
+For requirements, setup, controls and limitations, see the [README](https://github.com/PlainSeer/ha-alphaess-modbus#readme), [energy calculation notes](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/passive-house-energy.md) and [release history](https://github.com/PlainSeer/ha-alphaess-modbus/releases).
+
+Existing installations should update through HACS and retain their configured integration and entities.
 
 ## Credits
 
-Based on the YAML integration by Axel Koegler — [projects.hillviewlodge.ie/alphaess](https://projects.hillviewlodge.ie/alphaess/)
+Original Python integration: [Senalse](https://github.com/senalse/ha-alphaess-modbus). Original YAML package: [Axel Koegler / Hillview](https://projects.hillviewlodge.ie/alphaess/). AlphaESS artwork identifies supported hardware; it does not imply endorsement.
