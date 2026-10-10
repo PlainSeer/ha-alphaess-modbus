@@ -53,6 +53,12 @@ These are **passive HA-side additions using data already read by the integration
 
 These are comparison sensors for future evaluation. They do not replace PredBat's load helpers, alter existing controls, or change any Modbus reads, writes, mappings or polling. See [calculation and limitations](docs/passive-house-energy.md) before using the energy estimates.
 
+### House Load Energy Today (unreleased)
+
+A separate daily kWh counter integrates the existing raw Current House Load calculation over time. It only increases or stays unchanged within a day and resets at local midnight using Home Assistant's timezone. Same-day totals restore after restart. It does not replace Today's House Energy, which remains the counter-balance comparison sensor, or any existing PredBat helper.
+
+The first day starts when enabled. Missing/stale readings and gaps longer than 60 seconds are omitted and flagged as `incomplete_day`; downtime cannot be reconstructed. See [calculation details](docs/passive-house-energy.md#house-load-energy-today).
+
 ### Not included
 
 Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitoring changes have **not** been adopted. BMS charge-complete detection and optional PV energy registers are not included. The existing integration's control behaviour remains in place; this is not full Hillview parity. See the [comparison report](docs/hillview-parity.md) for the original gap analysis.

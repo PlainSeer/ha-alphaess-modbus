@@ -25,6 +25,7 @@ from homeassistant.util import dt as dt_util
 from .const import DAILY_ENERGY_SENSORS, DOMAIN, SENSOR_REGISTERS, ModbusSensorDef
 from .coordinator import AlphaESSCoordinator
 from .house_energy import AlphaESSHouseEnergySensor
+from .house_load_daily import AlphaESSHouseLoadDailySensor
 
 
 @dataclass
@@ -145,6 +146,9 @@ async def async_setup_entry(
     ]
     entities += calculated
     sources = {entity._defn.key: entity for entity in calculated}
+    entities.append(AlphaESSHouseLoadDailySensor(
+        coordinator, entry, sources["current_house_load"]
+    ))
     entities += [
         AlphaESSFilteredPowerSensor(coordinator, entry, key, name, sources)
         for key, name in (
