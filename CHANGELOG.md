@@ -1,5 +1,14 @@
 # Changelog
 
+### v1.16.1
+
+- Refresh HACS information with fork attribution, the six passive additions and use-at-own-risk guidance.
+- Explicitly enable README rendering and display the existing AlphaESS artwork in README and info.md.
+- Existing brand icons and logos are unchanged. HACS list-row placeholders remain subject to HACS frontend support for local branding.
+- Documentation/metadata only: no sensor, control, Modbus register, polling or PredBat behaviour changes.
+
+---
+
 ### v1.16.0
 
 - Add Battery Full (SoC): a separate indicator for reported SoC exactly 100%, not BMS charge/balancing completion. Existing SoC and battery-status entities are unchanged.
