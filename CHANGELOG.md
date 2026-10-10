@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### v1.17.1
 
 - Correct Battery Full to use existing raw battery status `1` (Hillview’s charging-not-permitted / discharging-permitted indication), following clarification from Axel Koegler, instead of SoC exactly 100%.
 - Rename the default display name from Battery Full (SoC) to Battery Full; preserve its unique ID and existing entity IDs. Invalid or unrecognised status is unavailable.

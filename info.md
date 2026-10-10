@@ -14,7 +14,7 @@ Continues Senalse's v1.14.0 integration, with selected passive improvements insp
 
 ## Changes added by this fork
 
-### Unreleased
+### v1.17.1
 
 - Battery Full: uses existing raw battery status `1`, matching Hillview (charging not permitted, discharging permitted). Corrects the former SoC-only indicator in place, preserving its entity ID. No additional register reads or control changes.
 

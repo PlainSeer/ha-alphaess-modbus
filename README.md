@@ -45,7 +45,7 @@ These are **passive HA-side additions using data already read by the integration
 
 ### Additional passive sensors
 
-Introduced in v1.16.0. The Battery Full status correction below is currently unreleased.
+Introduced in v1.16.0. The Battery Full status correction below was added in v1.17.1.
 
 | New entity | Meaning |
 | --- | --- |
