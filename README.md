@@ -1,27 +1,61 @@
 # AlphaESS Modbus TCP - Home Assistant Integration
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-[![GitHub Release](https://img.shields.io/github/release/senalse/ha-alphaess-modbus.svg)](https://github.com/senalse/ha-alphaess-modbus/releases)
+[![GitHub Release](https://img.shields.io/github/release/PlainSeer/ha-alphaess-modbus.svg)](https://github.com/PlainSeer/ha-alphaess-modbus/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Local Home Assistant integration for **AlphaESS solar inverters** (SMILE-M5, SMILE5, SMILE-G3, SMILE-Hi, SMILE-B3 series) via **Modbus TCP**.
 
 No cloud account required. All communication is direct to the inverter on your local network.
 
-Based on the excellent YAML package by [Axel Koegler](https://projects.hillviewlodge.ie/alphaess/).
+> [!WARNING]
+> ## USE AT YOUR OWN RISK
+> **This is an unofficial community-maintained fork, not an AlphaESS product or a supported service. There is no guarantee of fitness, reliability or compatibility with your installation.**
+>
+> **The integration includes inherited controls that write to your inverter's Modbus registers.** The new v1.15.0 sensors are passive, but the integration as a whole is not read-only. Incorrect settings, incompatible firmware or conflicting control automations can cause unexpected charging, discharging or export, financial loss, or damage to equipment.
+>
+> Keep a restorable Home Assistant backup and understand your existing inverter controls before installing or updating. Review changes and verify your own installation after updating. Automated test success is not a safety certification.
+>
+> **You are responsible for deciding whether to use this software and for its operation on your equipment.** It is provided “as is”, without warranty, subject to the terms of the [MIT licence](LICENSE).
 
-> **Disclaimer**
-> This is an unofficial community integration, not affiliated with or supported by AlphaESS.
-> The integration can write values directly to your inverter's Modbus registers. Incorrect
-> values -- wrong power levels, bad SoC limits, or invalid dispatch parameters -- can
-> damage your battery or cause unexpected inverter behaviour. Use this integration at your
-> own risk. The author accepts no responsibility for damage to hardware or loss of data.
+
+## About this fork
+
+**PlainSeer/ha-alphaess-modbus** continues from [Senalse's integration](https://github.com/senalse/ha-alphaess-modbus) at v1.14.0. The original Python integration is Senalse's work, based on [Axel Koegler's Hillview AlphaESS YAML package](https://projects.hillviewlodge.ie/alphaess/).
+
+This fork exists to maintain our installation and selectively adopt useful HA-side improvements while preserving working inverter controls and PredBat compatibility. Upstream appears inactive: as checked on **10 October 2026**, its latest default-branch commit was [the v1.14.0 release on 7 June 2026](https://github.com/senalse/ha-alphaess-modbus/commit/3b944d6bbba8cae6ccc6f58ca99f2ec8a6e46563). This is an observation about published commits, not a claim that the author has abandoned the project. We retain the fork relationship and upstream attribution.
+
+### Added in this fork: v1.15.0
+
+Inspired by the filtered-power approach in [Hillview's package and change history](https://projects.hillviewlodge.ie/_alphaess/integration_alpha_ess.txt):
+
+| New sensor | What it does |
+| --- | --- |
+| Current House Load Filtered | Smooths the existing raw house-load calculation. |
+| Current PV Production Filtered | Smooths the existing raw PV-production calculation. |
+| Excess Power | Subtracts filtered house load from filtered PV production and clamps the result at zero. This is an estimate, not an export command or a guarantee of available inverter capacity. |
+
+All three report watts. On each source-value change, the filter uses 80% of its previous filtered value and 20% of the new value, rounded to two decimal places. Unchanged values do not advance the filter. Filters initialize from current readings after restart and reset after unavailable input; their history is not restored.
+
+These are **passive HA-side additions using data already read by the integration**. Existing raw sensors and inverter controls do not consume the new filtered values. The house-load filter preserves this fork's existing house-load calculation, so it is not an exact copy of Hillview's house-load behaviour.
+
+**No Modbus register addresses, mappings, reads, writes or polling were added, removed or altered.** Existing domain, configuration-entry format, entity identities and PredBat-facing entities are preserved. Our maintenance boundary is to leave the existing Modbus register and polling implementation unchanged.
+
+### Not included
+
+Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitoring changes have **not** been adopted. Battery-full detection, additional total/today house-energy sensors and optional PV energy registers are also not included. The existing integration's control behaviour remains in place; this is not full Hillview parity. See the [comparison report](docs/hillview-parity.md) for the original gap analysis.
+
+### Validation
+
+The 12 isolated sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12; HACS and hassfest checks also pass. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
+
+
 
 ---
 
 ## Features
 
-- **103 sensor entities enabled by default** (172 total) - real-time power flows, battery SoC/SoH, cell voltages, temperatures, voltages, energy totals, daily energy summaries, dispatch diagnostics, grid safety parameters, faults & warnings
+- **Power, energy and diagnostic sensors** - real-time power flows, battery SoC/SoH, cell voltages, temperatures, voltages, energy totals, daily energy summaries, dispatch diagnostics, grid safety parameters, faults & warnings
 - **Force Charging** - charge battery from grid at configurable power (kW), duration, and cutoff SoC
 - **Force Charging Hold** - keeps Force Charging running indefinitely after the duration expires; turn on before starting Force Charging for continuous charging without a time limit
 - **Force Discharging** - discharge battery at configurable power, duration, and cutoff SoC; automatically stops 1% above the cutoff and resets dispatch so the inverter returns to self-consumption without any grid draw
@@ -57,13 +91,13 @@ Based on the excellent YAML package by [Axel Koegler](https://projects.hillviewl
 
 1. Open HACS in Home Assistant
 2. Go to **Integrations** → click the three-dot menu → **Custom Repositories**
-3. Add `https://github.com/senalse/ha-alphaess-modbus` - category: **Integration**
+3. Add `https://github.com/PlainSeer/ha-alphaess-modbus` - category: **Integration**
 4. Click **Download** on the AlphaESS Modbus TCP card
 5. Restart Home Assistant
 
 ### Manual
 
-1. Download the latest release from the [Releases page](https://github.com/senalse/ha-alphaess-modbus/releases)
+1. Download the latest release from the [Releases page](https://github.com/PlainSeer/ha-alphaess-modbus/releases)
 2. Copy the `custom_components/alphaess_modbus` folder into your HA config directory under `custom_components/`
 3. Restart Home Assistant
 
@@ -138,7 +172,7 @@ B3 and B3PLUS inverters report some registers with different scale factors. Sele
 
 ### Sensors (read-only)
 
-103 sensors are enabled by default; the remaining 69 are disabled and can be turned on individually in HA under Settings → Devices & Services → [device] → entities. Sensors marked *(disabled)* below are off by default.
+Some diagnostic sensors are disabled by default and can be turned on individually in HA under Settings → Devices & Services → [device] → entities. Sensors marked *(disabled)* below are off by default.
 
 #### Power (real-time)
 
