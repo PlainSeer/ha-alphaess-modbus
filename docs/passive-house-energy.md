@@ -25,3 +25,13 @@ Both energy entities are estimates: asynchronous readings, counter resolution an
 Keep the existing PredBat house-energy integration helper and daily utility meter. No configuration is migrated, no automation consumes these new entities, and installing this release does not migrate PredBat to these sensors. Compare recorded values over complete days before separately deciding whether to change any consumer. The battery indicator does not control charging, Hold/Freeze, EV charging, export or Demand/ECO.
 
 Tests exercise the real HA sensor classes with an in-memory coordinator: counter balance/reset, partial refresh, invalid inputs, AC-PV accounting/gaps, restore precision, midnight baselines and SoC boundaries. They do not connect to an inverter or certify live operation.
+
+## House Load Energy Today (Accumulated)
+
+Separate increment-only daily estimate, using the existing raw Current House Load calculation rather than the daily counter balance. Adds positive power × elapsed seconds / 3,600,000 using the previous sample (left integration). Negative calculated power contributes zero. It updates on coordinator callbacks even if the power value remains constant; it issues no new Modbus requests and does not use filtered power.
+
+Resets at midnight in the HA timezone, including daylight-saving transitions. A callback spanning midnight counts only the new-day part in the new total. Same-day accumulated kWh restores at full precision, but the prior power sample is discarded so restart downtime is not invented. The first day is partial and starts at zero when enabled. HA must be running to display a midnight reset; starting on a later day starts a new total.
+
+Missing, malformed, unsuccessful or stale (>60 seconds) required readings make the sensor unavailable and break integration across the gap. Intervals longer than 60 seconds are skipped, with `incomplete_day` flagging lost coverage. Very slow custom polling can therefore leave this sensor unavailable. Backwards clock adjustments suspend accumulation until time catches up. An interval ending with invalid data is omitted conservatively.
+
+The new entity is passive and has state class `total_increasing`; it neither rewrites the existing source calculation nor changes its work-mode handling. It does not feed inverter controls, Hold/Freeze, EV charging, export or PredBat. Keep existing helpers and compare full days before separately choosing to migrate consumers. Power integration is an estimate, not recovered hardware-meter history. Tests cover constant power, invalid/stale inputs, outages, negative power, midnight/DST dates, backwards time and restart restoration.
