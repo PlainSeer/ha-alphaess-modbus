@@ -41,13 +41,23 @@ These are **passive HA-side additions using data already read by the integration
 
 **No Modbus register addresses, mappings, reads, writes or polling were added, removed or altered.** Existing domain, configuration-entry format, entity identities and PredBat-facing entities are preserved. Our maintenance boundary is to leave the existing Modbus register and polling implementation unchanged.
 
+### Additional passive sensors: v1.16.0
+
+| New entity | Meaning |
+| --- | --- |
+| Battery Full (SoC) | On only when the existing reported battery SoC is exactly 100%. This is **not** proof that BMS charging or balancing has finished. Invalid/missing SoC makes it unavailable. |
+| Today's House Energy | Existing daily import − export + PV − battery charged + battery discharged. Existing daily PV already includes AC PV. |
+| House Energy Since Tracking | Starts at zero when first enabled; accumulates the same balance from existing counter changes, plus observed positive AC-PV power. **Not lifetime house consumption.** |
+
+These are comparison sensors for future evaluation. They do not replace PredBat's load helpers, alter existing controls, or change any Modbus reads, writes, mappings or polling. See [calculation and limitations](docs/passive-house-energy.md) before using the energy estimates.
+
 ### Not included
 
-Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitoring changes have **not** been adopted. Battery-full detection, additional total/today house-energy sensors and optional PV energy registers are also not included. The existing integration's control behaviour remains in place; this is not full Hillview parity. See the [comparison report](docs/hillview-parity.md) for the original gap analysis.
+Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitoring changes have **not** been adopted. BMS charge-complete detection and optional PV energy registers are not included. The existing integration's control behaviour remains in place; this is not full Hillview parity. See the [comparison report](docs/hillview-parity.md) for the original gap analysis.
 
 ### Validation
 
-The 12 isolated sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12; HACS and hassfest checks also pass. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
+The 38 isolated sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12; HACS and hassfest checks also pass. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
 
 
 

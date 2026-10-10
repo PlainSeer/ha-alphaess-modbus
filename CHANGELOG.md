@@ -1,5 +1,16 @@
 # Changelog
 
+### v1.16.0
+
+- Add Battery Full (SoC): a separate indicator for reported SoC exactly 100%, not BMS charge/balancing completion. Existing SoC and battery-status entities are unchanged.
+- Add Today's House Energy using existing daily energy values, including AC PV once.
+- Add House Energy Since Tracking: starts at zero and restores its accumulated balance; not lifetime consumption. Counter resets and missing AC-PV history are documented in [calculation notes](docs/passive-house-energy.md).
+- Keep existing PredBat energy helpers while evaluating the new estimates. No automatic migration or control changes.
+- No changes to Modbus register addresses, mappings, reads, writes or polling.
+- 38 sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12; HACS and hassfest pass for the sensor implementation. In-memory tests do not certify live inverter operation.
+
+---
+
 ### v1.15.0
 
 #### New sensors

@@ -6,6 +6,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from .house_energy import finite
 from .const import DOMAIN
 from .coordinator import AlphaESSCoordinator
 
@@ -17,6 +20,7 @@ async def async_setup_entry(
     async_add_entities([
         AlphaESSExcessExportPauseSensor(coordinator, entry),
         AlphaESSForceImportPauseSensor(coordinator, entry),
+        AlphaESSBatteryFullSoCSensor(coordinator, entry),
     ])
 
 
@@ -68,3 +72,27 @@ class AlphaESSForceImportPauseSensor(BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         return self._coordinator.fi_paused
+
+
+class AlphaESSBatteryFullSoCSensor(CoordinatorEntity, BinarySensorEntity):
+    """Reported SoC is 100%; not a BMS charge-complete or balancing signal."""
+
+    _attr_has_entity_name = True
+    _attr_name = "Battery Full (SoC)"
+    _attr_icon = "mdi:battery-check"
+
+    def __init__(self, coordinator, entry):
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{entry.entry_id}_battery_full_soc"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)})
+
+    @property
+    def available(self):
+        value = finite((self.coordinator.data or {}).get("soc_battery"))
+        return super().available and value is not None and 0 <= value <= 100
+
+    @property
+    def is_on(self):
+        if not self.available:
+            return None
+        return float(self.coordinator.data["soc_battery"]) == 100
