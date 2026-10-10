@@ -20,7 +20,7 @@ async def async_setup_entry(
     async_add_entities([
         AlphaESSExcessExportPauseSensor(coordinator, entry),
         AlphaESSForceImportPauseSensor(coordinator, entry),
-        AlphaESSBatteryFullSoCSensor(coordinator, entry),
+        AlphaESSBatteryFullSensor(coordinator, entry),
     ])
 
 
@@ -74,25 +74,26 @@ class AlphaESSForceImportPauseSensor(BinarySensorEntity):
         return self._coordinator.fi_paused
 
 
-class AlphaESSBatteryFullSoCSensor(CoordinatorEntity, BinarySensorEntity):
-    """Reported SoC is 100%; not a BMS charge-complete or balancing signal."""
+class AlphaESSBatteryFullSensor(CoordinatorEntity, BinarySensorEntity):
+    """Hillview full indication: charging not permitted, discharging permitted."""
 
     _attr_has_entity_name = True
-    _attr_name = "Battery Full (SoC)"
+    _attr_name = "Battery Full"
     _attr_icon = "mdi:battery-check"
 
     def __init__(self, coordinator, entry):
         super().__init__(coordinator)
+        # Preserve the v1.16.0 registry identity and existing entity IDs.
         self._attr_unique_id = f"{entry.entry_id}_battery_full_soc"
         self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)})
 
     @property
     def available(self):
-        value = finite((self.coordinator.data or {}).get("soc_battery"))
-        return super().available and value is not None and 0 <= value <= 100
+        value = finite((self.coordinator.data or {}).get("battery_status"))
+        return super().available and value in (0, 1, 256, 257, 512, 513)
 
     @property
     def is_on(self):
         if not self.available:
             return None
-        return float(self.coordinator.data["soc_battery"]) == 100
+        return float(self.coordinator.data["battery_status"]) == 1

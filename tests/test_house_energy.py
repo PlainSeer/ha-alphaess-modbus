@@ -9,7 +9,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
 from custom_components.alphaess_modbus.house_energy import AlphaESSHouseEnergySensor, COUNTERS, DAILY
-from custom_components.alphaess_modbus.binary_sensor import AlphaESSBatteryFullSoCSensor
+from custom_components.alphaess_modbus.binary_sensor import AlphaESSBatteryFullSensor
 from custom_components.alphaess_modbus.sensor import AlphaESSDailySensor
 from custom_components.alphaess_modbus.const import DAILY_ENERGY_SENSORS
 
@@ -163,14 +163,32 @@ def test_quantisation_decrease_is_not_silently_clamped():
     assert s.native_value == -0.01
 
 
-@pytest.mark.parametrize('soc, expected', [(100, True), (99.9, False), (0, False),
-                                         (None, None), (101, None), (-1, None),
-                                         (float('nan'), None), ('bad', None)])
-def test_battery_full_soc(soc, expected):
-    c = SimpleNamespace(data={'soc_battery': soc}, last_update_success=True)
-    s = AlphaESSBatteryFullSoCSensor(c, SimpleNamespace(entry_id='test'))
+@pytest.mark.parametrize('status, expected', [
+    (1, True), (0, False), (256, False), (257, False), (512, False), (513, False),
+    (None, None), (-1, None), (2, None), (1.5, None),
+    (float('nan'), None), (float('inf'), None), ('bad', None),
+])
+def test_battery_full_status(status, expected):
+    c = SimpleNamespace(data={'battery_status': status}, last_update_success=True)
+    s = AlphaESSBatteryFullSensor(c, SimpleNamespace(entry_id='test'))
     assert s.is_on is expected
+    assert s.available is (expected is not None)
     c.last_update_success = False
+    assert not s.available
+    assert s.is_on is None
+
+
+def test_battery_full_uses_status_not_soc_and_preserves_identity():
+    c = SimpleNamespace(data={'battery_status': 256, 'soc_battery': 100},
+                        last_update_success=True)
+    s = AlphaESSBatteryFullSensor(c, SimpleNamespace(entry_id='test'))
+    assert s.is_on is False  # 100% alone no longer means full.
+    c.data.update(battery_status=1, soc_battery=99)
+    assert s.is_on is True
+    assert s.name == 'Battery Full'
+    assert s.unique_id == 'test_battery_full_soc'
+    assert s.device_info['identifiers'] == {('alphaess_modbus', 'test')}
+    c.data = {}
     assert s.is_on is None
 
 

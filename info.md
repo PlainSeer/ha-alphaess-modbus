@@ -14,6 +14,10 @@ Continues Senalse's v1.14.0 integration, with selected passive improvements insp
 
 ## Changes added by this fork
 
+### v1.17.1
+
+- Battery Full: uses existing raw battery status `1`, matching Hillview (charging not permitted, discharging permitted). Corrects the former SoC-only indicator in place, preserving its entity ID. No additional register reads or control changes.
+
 ### v1.15.0
 
 - Current House Load Filtered: smooths the existing house-load value.
@@ -26,7 +30,7 @@ Continues Senalse's v1.14.0 integration, with selected passive improvements insp
 
 ### v1.16.0
 
-- Battery Full (SoC): an additional on/off indicator for reported SoC exactly 100%. It does not replace the existing SoC sensor or confirm BMS charging/balancing completion.
+- Introduced the battery-full indicator, initially based on SoC; corrected above.
 - Today's House Energy: existing daily import minus export plus PV minus battery charged plus discharged; AC PV included once.
 - House Energy Since Tracking: accumulates from zero when first enabled; not lifetime consumption. Downtime can leave missing AC-PV history.
 

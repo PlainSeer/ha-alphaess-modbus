@@ -43,11 +43,13 @@ These are **passive HA-side additions using data already read by the integration
 
 **No Modbus register addresses, mappings, reads, writes or polling were added, removed or altered.** Existing domain, configuration-entry format, entity identities and PredBat-facing entities are preserved. Our maintenance boundary is to leave the existing Modbus register and polling implementation unchanged.
 
-### Additional passive sensors: v1.16.0
+### Additional passive sensors
+
+Introduced in v1.16.0. The Battery Full status correction below was added in v1.17.1.
 
 | New entity | Meaning |
 | --- | --- |
-| Battery Full (SoC) | On only when the existing reported battery SoC is exactly 100%. This is **not** proof that BMS charging or balancing has finished. Invalid/missing SoC makes it unavailable. |
+| Battery Full | On when existing raw battery status is `1`, matching Hillview (charging not permitted, discharging permitted). Corrects the former SoC-only indicator while preserving its entity ID. Invalid/missing or unrecognised status makes it unavailable. |
 | Today's House Energy | Existing daily import − export + PV − battery charged + battery discharged. Existing daily PV already includes AC PV. |
 | House Energy Since Tracking | Starts at zero when first enabled; accumulates the same balance from existing counter changes, plus observed positive AC-PV power. **Not lifetime house consumption.** |
 
@@ -61,7 +63,7 @@ The first day starts when enabled. Missing/stale readings and gaps longer than 6
 
 ### Not included
 
-Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitoring changes have **not** been adopted. BMS charge-complete detection and optional PV energy registers are not included. The existing integration's control behaviour remains in place; this is not full Hillview parity. See the [comparison report](docs/hillview-parity.md) for the original gap analysis.
+Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitoring changes have **not** been adopted. Optional PV energy registers are not included. The existing integration's control behaviour remains in place; this is not full Hillview parity. See the [comparison report](docs/hillview-parity.md) for the original gap analysis.
 
 ### Validation
 
