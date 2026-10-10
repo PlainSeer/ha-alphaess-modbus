@@ -53,7 +53,7 @@ These are **passive HA-side additions using data already read by the integration
 
 These are comparison sensors for future evaluation. They do not replace PredBat's load helpers, alter existing controls, or change any Modbus reads, writes, mappings or polling. See [calculation and limitations](docs/passive-house-energy.md) before using the energy estimates.
 
-### House Load Energy Today (Accumulated) (unreleased)
+### House Load Energy Today (Accumulated): v1.17.0
 
 A separate daily kWh counter integrates the existing raw Current House Load calculation over time. It only increases or stays unchanged within a day and resets at local midnight using Home Assistant's timezone. Same-day totals restore after restart. It does not replace Today's House Energy, which remains the counter-balance comparison sensor, or any existing PredBat helper.
 
@@ -65,7 +65,7 @@ Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitor
 
 ### Validation
 
-The 38 isolated sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12; HACS and hassfest checks also pass. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
+The 51 isolated sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12; HACS and hassfest checks also pass. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
 
 
 

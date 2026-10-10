@@ -1,5 +1,14 @@
 # Changelog
 
+### v1.17.0
+
+- Add House Load Energy Today (Accumulated), a separate daily kWh counter using the existing raw house-load calculation. Only increases or stays unchanged within a day; resets at HA-local midnight.
+- Restore same-day totals at full precision. Skip missing/stale readings, restart downtime and intervals over 60 seconds; expose incomplete-day status. The first day starts when enabled.
+- Preserve all existing comparison sensors and PredBat helpers. No Modbus registers, reads, writes, polling or control changes.
+- 51 sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12. HACS and hassfest pass for the implementation.
+
+---
+
 ### v1.16.1
 
 - Refresh HACS information with fork attribution, the six passive additions and use-at-own-risk guidance.

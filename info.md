@@ -20,6 +20,10 @@ Continues Senalse's v1.14.0 integration, with selected passive improvements insp
 - Current PV Production Filtered: smooths the existing PV-production value.
 - Excess Power: filtered PV minus filtered house load, clamped at zero; an estimate, not an export command.
 
+### v1.17.0
+
+- House Load Energy Today (Accumulated): a separate kWh counter integrating existing house-load power. Only increases within each day and resets at HA-local midnight. Restores same-day totals after restart; missing readings and downtime leave gaps. Existing comparison sensors and PredBat helpers are retained.
+
 ### v1.16.0
 
 - Battery Full (SoC): an additional on/off indicator for reported SoC exactly 100%. It does not replace the existing SoC sensor or confirm BMS charging/balancing completion.
