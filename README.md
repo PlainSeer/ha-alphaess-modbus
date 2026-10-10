@@ -41,7 +41,7 @@ These are **passive HA-side additions using data already read by the integration
 
 **No Modbus register addresses, mappings, reads, writes or polling were added, removed or altered.** Existing domain, configuration-entry format, entity identities and PredBat-facing entities are preserved. Our maintenance boundary is to leave the existing Modbus register and polling implementation unchanged.
 
-### Additional passive sensors (unreleased)
+### Additional passive sensors: v1.16.0
 
 | New entity | Meaning |
 | --- | --- |
@@ -57,7 +57,7 @@ Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitor
 
 ### Validation
 
-The 12 isolated sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12; HACS and hassfest checks also pass. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
+The 38 isolated sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12; HACS and hassfest checks also pass. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
 
 
 
