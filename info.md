@@ -6,45 +6,34 @@ Local Home Assistant integration for AlphaESS inverters via Modbus TCP, without 
 
 ## USE AT YOUR OWN RISK
 
-Unofficial community-maintained software, supplied without warranty. The integration retains inherited controls that write to your inverter. Incorrect settings can cause unexpected operation, financial loss or equipment damage. Keep a restorable backup. Passing tests does not certify hardware safety.
+Unofficial community-maintained software, supplied without warranty. The integration includes controls that write to your inverter. Incorrect settings can cause unexpected operation, financial loss or equipment damage. Keep a restorable backup. Passing tests does not certify hardware safety.
 
 ## About this fork
 
-Continues Senalse's v1.14.0 integration, with selected passive improvements inspired by Axel Koegler's Hillview package. Original authors retain full credit. This is not an official AlphaESS integration or full Hillview parity.
+Continues Senalse's v1.14.0 integration, with passive sensors and optional controls inspired by Axel Koegler's Hillview package. Original authors retain full credit. This is not an official AlphaESS integration or full Hillview parity.
 
-## Changes added by this fork
+## Sensor overview
 
-### v1.17.1
+- **Current House Load Filtered / Current PV Production Filtered:** smooth the existing power calculations. These displayed values do not drive inverter controls.
+- **Excess Power:** filtered PV minus filtered house load, clamped at zero; an estimate, not an export command.
+- **Battery Full:** on when existing raw battery status is `1` (charging not permitted, discharging permitted), matching Hillview. Invalid, missing or unrecognised status makes it unavailable.
+- **Today's House Energy:** a daily balance of import, export, PV and battery energy, including AC PV once. This estimate can decrease during the day.
+- **House Energy Since Tracking:** accumulates from zero when first enabled; not lifetime consumption. Downtime can leave gaps.
+- **House Load Energy Today (Accumulated):** integrates existing house-load power into kWh. Only increases within each day, resets at HA-local midnight and restores same-day totals after restart. Missing readings and downtime leave gaps.
 
-- Battery Full: uses existing raw battery status `1`, matching Hillview (charging not permitted, discharging permitted). Corrects the former SoC-only indicator in place, preserving its entity ID. No additional register reads or control changes.
-
-### v1.15.0
-
-- Current House Load Filtered: smooths the existing house-load value.
-- Current PV Production Filtered: smooths the existing PV-production value.
-- Excess Power: filtered PV minus filtered house load, clamped at zero; an estimate, not an export command.
-
-### v1.17.0
-
-- House Load Energy Today (Accumulated): a separate kWh counter integrating existing house-load power. Only increases within each day and resets at HA-local midnight. Restores same-day totals after restart; missing readings and downtime leave gaps. Existing comparison sensors and PredBat helpers are retained.
-
-### v1.16.0
-
-- Introduced the battery-full indicator, initially based on SoC; corrected above.
-- Today's House Energy: existing daily import minus export plus PV minus battery charged plus discharged; AC PV included once.
-- House Energy Since Tracking: accumulates from zero when first enabled; not lifetime consumption. Downtime can leave missing AC-PV history.
-
-No Modbus register addresses, mappings, reads, writes or polling were changed by these additions. Existing entities and controls are preserved. Keep existing PredBat house-energy helpers while comparing the estimates; nothing migrates automatically.
-
-Hillview 11.2 import pause/resume and 11.3 Cutoff SoC Hold monitoring changes are not adopted.
+These passive sensors use data already read by the integration, without adding register reads or writes or changing polling. They do not automatically replace existing helpers or automations. See the energy calculation notes below before using the estimates.
 
 ## Optional Peak Shaving
 
-Off by default. Uses existing dispatch controls to reduce grid import towards a target when explicitly enabled. See the [feature guide and limitations](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/peak-shaving.md).
+**Off by default and after restart.** Uses existing dispatch controls to reduce grid import towards a target when explicitly enabled. Simulation-tested, not yet tested on physical inverter hardware; it cannot guarantee a hard import cap or prevent transient export. See the [feature guide and limitations](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/peak-shaving.md).
+
+Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have not been adopted, and optional PV energy registers are not included.
 
 ## Documentation and installation
 
 For requirements, setup, controls and limitations, see the [README](https://github.com/PlainSeer/ha-alphaess-modbus#readme), [energy calculation notes](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/passive-house-energy.md) and [release history](https://github.com/PlainSeer/ha-alphaess-modbus/releases).
+
+Version-specific changes, fixes and acknowledgements belong in the [GitHub release notes](https://github.com/PlainSeer/ha-alphaess-modbus/releases).
 
 Existing installations should update through HACS and retain their configured integration and entities.
 
