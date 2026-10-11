@@ -129,7 +129,7 @@ export function diagnosticGroups(device) {
     const label = shortLabel
       .replace(/temperature/ig, "temp").replace(/minimum/ig, "min").replace(/maximum/ig, "max");
     section.items.push({key, domain, entity:entity.entity_id, label, fullLabel,
-      icon:entity.icon || section.icon, color:"blue"});
+      icon:entity.icon || section.icon, color:key === "power_battery" ? "battery" : "blue"});
   }
   return sections.filter(s => s.items.length).map(({title, items}) => ({title,
     items:items.sort((a,b) => a.label.localeCompare(b.label) || a.entity.localeCompare(b.entity))}));
@@ -220,9 +220,11 @@ export function presentation(state, item, locale = "en") {
   let unit = state.attributes?.unit_of_measurement || "";
   if (item.domain === "button") { value = "Open"; unit = ""; }
   else if (Number.isFinite(n) && state.state.trim() !== "") {
-    // Preserve battery direction; only grid gets explicit Import/Export wording.
+    // Presentation only: retain signed sensor states for history and controls.
     if (item.color === "grid") value = `${n < 0 ? "Export" : "Import"} ${new Intl.NumberFormat(locale,{maximumFractionDigits:0}).format(Math.abs(n))}`;
+    else if (item.color === "battery") value = n === 0 ? "Idle" : `${n < 0 ? "Charging" : "Discharging"} ${new Intl.NumberFormat(locale,{maximumFractionDigits:unit === "W" ? 0 : 2}).format(Math.abs(n))}`;
     else value = new Intl.NumberFormat(locale,{maximumFractionDigits:unit === "W" || unit === "%" ? 0 : 2}).format(n);
+    if (item.color === "battery" && n === 0) unit = "";
   } else if (value === "on" || value === "off") value = value === "on" ? "On" : "Off";
   return {value, unit, color:COLORS[color] || COLORS.blue};
 }

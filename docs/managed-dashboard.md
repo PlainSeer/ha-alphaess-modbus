@@ -15,6 +15,11 @@ repeated icons. Full names appear on the left and values on the right; long name
 wrap on narrow screens. The two panel columns stack on phones.
 No third-party dashboard cards are required.
 
+Battery power shows **Charging** for negative readings, **Discharging** for
+positive readings, and **Idle** at zero in Overview and Diagnostics. The displayed
+magnitude keeps the sensor's unit; the underlying signed sensor value, history
+and inverter controls are unchanged.
+
 ## Examples
 
 These screenshots use invented values and the actual bundled card in a local

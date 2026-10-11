@@ -33,7 +33,14 @@ test('controls include peak and remaining controls once; omit disabled controls'
 });
 test('format missing states, negative battery direction and grid export',()=>{
  for(const state of [undefined,{state:null},{state:'unknown'},{state:'unavailable'}])assert.equal(presentation(state,{}).value,'Unavailable');
- assert.equal(presentation({state:'-1450',attributes:{unit_of_measurement:'W'}},{color:'battery'}).value,'-1,450');
+ assert.equal(presentation({state:'-1450',attributes:{unit_of_measurement:'W'}},{color:'battery'}).value,'Charging 1,450');
+ assert.equal(presentation({state:'1450',attributes:{unit_of_measurement:'W'}},{color:'battery'}).value,'Discharging 1,450');
+ assert.deepEqual(presentation({state:'0',attributes:{unit_of_measurement:'W'}},{color:'battery'}),{value:'Idle',unit:'',color:'#9e9e9e'});
+ assert.equal(presentation({state:'-1.45',attributes:{unit_of_measurement:'kW'}},{color:'battery'}).value,'Charging 1.45');
+ const unavailable=presentation({state:'unavailable'},{color:'battery'});
+ assert.equal(unavailable.value,'Unavailable');
+ const device=discoverDevices([entity('power_battery')],devices,'one')[0];
+ assert.equal(mod.diagnosticGroups(device).flatMap(g=>g.items)[0].color,'battery');
  assert.equal(presentation({state:'-500',attributes:{unit_of_measurement:'W'}},{color:'grid'}).value,'Export 500');
  assert.equal(presentation({state:'off'},{domain:'switch'}).value,'Off');
 });

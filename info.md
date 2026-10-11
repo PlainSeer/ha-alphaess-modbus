@@ -31,6 +31,9 @@ Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have
 
 ## Optional managed dashboard
 
+Battery power is labelled **Charging**, **Discharging** or **Idle**. This is a
+display clarification only; signed sensor values and inverter controls are unchanged.
+
 Overview, Controls (including Peak Shaving) and Diagnostics, with automatic entity
 discovery and no extra custom-card dependencies. Add it once; the layout follows
 integration updates after restart and frontend refresh. Existing dashboards are
