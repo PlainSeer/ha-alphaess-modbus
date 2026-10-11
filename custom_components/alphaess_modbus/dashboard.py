@@ -12,6 +12,13 @@ from homeassistant.core import HomeAssistant
 _LOGGER = logging.getLogger(__name__)
 MODULE_PATH = Path(__file__).parent / "frontend" / "alphaess-dashboard.js"
 MODULE_URL = "/alphaess_modbus/alphaess-dashboard.js"
+CONTENT_PATH = MODULE_PATH.with_name("alphaess-dashboard-content.js")
+CONTENT_URL = "/alphaess_modbus/alphaess-dashboard-content.js"
+
+
+def _dashboard_digest() -> str:
+    """Invalidate both modules when either changes."""
+    return sha256(MODULE_PATH.read_bytes() + CONTENT_PATH.read_bytes()).hexdigest()[:16]
 
 
 async def async_register_dashboard_resource(hass: HomeAssistant, url: str) -> None:
@@ -48,10 +55,10 @@ async def async_setup_dashboard(hass: HomeAssistant) -> None:
     if "frontend" not in hass.config.components:
         return
     try:
-        content = await hass.async_add_executor_job(MODULE_PATH.read_bytes)
-        digest = sha256(content).hexdigest()[:16]
+        digest = await hass.async_add_executor_job(_dashboard_digest)
         await hass.http.async_register_static_paths([
-            StaticPathConfig(MODULE_URL, str(MODULE_PATH), cache_headers=False)
+            StaticPathConfig(MODULE_URL, str(MODULE_PATH), cache_headers=False),
+            StaticPathConfig(CONTENT_URL, str(CONTENT_PATH), cache_headers=False),
         ])
         url = f"{MODULE_URL}?v={digest}"
         add_extra_js_url(hass, url)

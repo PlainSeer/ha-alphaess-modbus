@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
 const dom=new JSDOM('<!doctype html><html><body></body></html>');
 for(const key of ['window','document','HTMLElement','customElements','CustomEvent']) globalThis[key]=dom.window[key];
-const mod=await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard.js');
+const mod=await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard-content.js');
 const {discoverDevices,groupsFor,presentation,AlphaESSDashboardStrategy:Dashboard,AlphaESSViewStrategy:View}=mod;
 const entity=(key,domain='sensor',entry='first',device='one',extra={})=>({entity_id:`${domain}.renamed_${entry}_${key}`,unique_id:`${entry}_${key}`,platform:'alphaess_modbus',config_entry_id:entry,device_id:device,...extra});
 const devices=[{id:'one',name:'Roof'},{id:'two',name_by_user:'Garage'}];
@@ -55,7 +55,7 @@ test('incomplete energy day is visible without hover; no stale state after unava
  h.states={};card.hass=h;assert.equal(card.shadowRoot.querySelector('.status').hidden,true);assert.match(card.shadowRoot.textContent,/Unavailable/);
 });
 test('module reload does not double-register custom elements or picker entries',async()=>{
- await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard.js?reload=1');
+ await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard-content.js?reload=1');
  assert.equal(window.customStrategies.filter(s=>s.type==='alphaess-modbus').length,1);
 });
 

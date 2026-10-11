@@ -49,9 +49,26 @@ HACS frontend download is needed. YAML-managed resources are not modified; those
 installations retain the extra-frontend-module loading path.
 
 This fallback helps when the initial frontend module was missed. HA still starts
-resources asynchronously and has a five-second strategy-registration timeout, so
-it does not guarantee recovery from a slow or failed download. Already-open
-browser sessions need a full refresh after installing the update.
+resources asynchronously and has a five-second strategy-registration timeout.
+The diagnostic loader registers the strategies before importing the main dashboard
+module. If that import fails or remains pending for eight seconds, it returns a
+built-in Markdown report instead of depending on a custom card to display errors.
+Already-open browser sessions need a full refresh after installing the update.
+
+### Loading diagnostics
+
+Diagnostic builds include a **Loader diagnostics** view when loading succeeds, or
+a diagnostic report when the main module fails. The report shows the loader version,
+relative timing, module execution stages, element registration and a bounded error
+message. Server URLs are redacted; no entity values, credentials or stack traces are
+collected. Nothing is uploaded, stored or sent to HA by the diagnostic loader.
+Take a screenshot of the report when reporting a failure.
+
+If HA's original plain strategy-registration timeout still appears, the diagnostic
+loader itself did not register in time. It cannot report its own download or parse
+failure. Successful loading on another device does not establish why that failed.
+Imports are shared, with no automatic retry loop. Refresh to start a fresh attempt;
+if a slow import finishes after the report appeared, revisit the dashboard.
 
 If you uninstall the integration, also remove its `/alphaess_modbus/alphaess-dashboard.js`
 resource from dashboard resources; removing only a dashboard does not require this.
