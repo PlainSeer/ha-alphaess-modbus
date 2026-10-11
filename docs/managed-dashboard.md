@@ -8,6 +8,9 @@ Each inverter gets its own views. Hidden and disabled entities are omitted.
 The layout uses 95% of the available view width, with two columns of panels on
 larger screens, stacked panels on phones and short single-line tile labels.
 Long labels retain their full text in the tile's details/accessible description.
+Diagnostics uses the same panels, grouping battery, grid, solar, energy, dispatch,
+inverter/system and fault sensors. Other enabled sensors remain available in a
+fallback group; full sensor names are retained in details.
 No third-party dashboard cards are required.
 
 ## Examples

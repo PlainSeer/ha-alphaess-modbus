@@ -106,7 +106,36 @@ export function discoverDevices(entities, devices, selectedDevice) {
   return [...groups.values()].sort((a,b) => a.title.localeCompare(b.title) || a.entryId.localeCompare(b.entryId));
 }
 
+/** Preserve every enabled sensor from the old list, grouped by its stable key. */
+export function diagnosticGroups(device) {
+  const sections = [
+    ["Faults & warnings", /fault|warning/, "mdi:alert-circle-outline"],
+    ["Energy", /^(total_energy_|today_|house_energy_|house_load_energy_)/, "mdi:counter"],
+    ["Dispatch & operating status", /dispatch|^force_|^peak_shaving|^excess_export|^(charging|discharging)_/, "mdi:information-outline"],
+    ["Battery", /battery|^bms_|^lmu_/, "mdi:battery"],
+    ["Grid", /grid|^(ovp|uvp|ofp|ufp)/, "mdi:transmission-tower"],
+    ["Solar", /^pv|_pv_|^active_power_pv/, "mdi:solar-power"],
+    ["Inverter & system", /inverter|^system_|^ems_|^iso_|^modbus_|^ip_|^local_ip$|^subnet_mask$|^gateway$/, "mdi:chip"],
+    ["Other sensors", /.*/, "mdi:information-outline"],
+  ].map(([title, match, icon]) => ({title, match, icon, items:[]}));
+  for (const [id, entity] of device.entities) {
+    const [domain, key] = id.split(".");
+    if (!["sensor", "binary_sensor"].includes(domain)) continue;
+    const section = sections.find(s => s.match.test(key));
+    const fullLabel = entity.name || entity.original_name || key.replaceAll("_", " ");
+    const shortLabel = section.title === "Battery" ? fullLabel.replace(/^Battery /i, "")
+      : section.title === "Inverter & system" ? fullLabel.replace(/^Inverter /i, "") : fullLabel;
+    const label = shortLabel
+      .replace(/temperature/ig, "temp").replace(/minimum/ig, "min").replace(/maximum/ig, "max");
+    section.items.push({key, domain, entity:entity.entity_id, label, fullLabel,
+      icon:entity.icon || section.icon, color:"blue"});
+  }
+  return sections.filter(s => s.items.length).map(({title, items}) => ({title,
+    items:items.sort((a,b) => a.label.localeCompare(b.label) || a.entity.localeCompare(b.entity))}));
+}
+
 export function groupsFor(device, page) {
+  if (page === "diagnostics") return diagnosticGroups(device);
   const specs = page === "overview" ? OVERVIEW : CONTROLS;
   const used = new Set();
   const groups = specs.map(group => ({ ...group, items: group.items.flatMap(item => {
@@ -143,13 +172,7 @@ async function discover(hass, config) {
   return discoverDevices(entities, devices, config.device_id);
 }
 function viewFor(device, page, config) {
-  if (page === "diagnostics") return {
-    title: config.title || "Diagnostics", path: config.path || "diagnostics",
-    cards: [{type:"entities", title:"Enabled sensors", show_header_toggle:false,
-      entities:[...device.entities.values()].filter(e => /^(sensor|binary_sensor)\./.test(e.entity_id))
-        .map(e=>e.entity_id).sort()}],
-  };
-  return { title: config.title || (page === "controls" ? "Controls" : "Overview"),
+  return { title: config.title || (page === "controls" ? "Controls" : page === "diagnostics" ? "Diagnostics" : "Overview"),
     path: config.path || page, type:"panel", cards:[{type:`custom:${CARD}`,
       title:device.title, page, groups:groupsFor(device,page)}] };
 }
@@ -224,7 +247,7 @@ export class AlphaESSSummary extends HTMLElement {
     this.shadowRoot.append(el("style",CSS));
     const wrap=el("div",undefined,config.page === "controls" ? "wrap controls" : "wrap"), intro=el("header",undefined,"intro");
     intro.append(el("h1",config.title || "AlphaESS"));
-    intro.append(el("p",config.page === "controls" ? "Tap a tile to open Home Assistant controls. Opening this page does not change inverter settings." : "Live power, battery and energy. Tap a value for history and details."));
+    intro.append(el("p",config.page === "controls" ? "Tap a tile to open Home Assistant controls. Opening this page does not change inverter settings." : config.page === "diagnostics" ? "Enabled sensors grouped by function. Tap a value for its full name, history and details." : "Live power, battery and energy. Tap a value for history and details."));
     const panels=el("div",undefined,"panels");
     const columns=[el("div",undefined,"column"),el("div",undefined,"column")];
     panels.append(...columns);wrap.append(intro,panels);this.shadowRoot.append(wrap);
@@ -256,7 +279,7 @@ export class AlphaESSSummary extends HTMLElement {
       row.value.textContent=p.value;row.unit.textContent=p.unit;row.icon.style.color=p.color;
       const incomplete=state?.attributes?.incomplete_day ? " · Incomplete day" : "";
       const reason=row.item.key === "peak_shaving" && state?.attributes?.reason ? ` · ${String(state.attributes.reason).replaceAll("_"," ")}` : "";
-      row.button.title=`${row.item.label}: ${p.value} ${p.unit}${incomplete}${reason}`;
+      row.button.title=`${row.item.fullLabel || row.item.label}: ${p.value} ${p.unit}${incomplete}${reason}`;
       row.button.setAttribute("aria-label",row.button.title);
       row.status.textContent=(incomplete+reason).replace(/^ · /, "");
       row.status.hidden=!row.status.textContent;

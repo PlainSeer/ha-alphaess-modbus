@@ -58,3 +58,24 @@ test('module reload does not double-register custom elements or picker entries',
  await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard.js?reload=1');
  assert.equal(window.customStrategies.filter(s=>s.type==='alphaess-modbus').length,1);
 });
+
+test('diagnostics uses shared panels and retains every enabled sensor exactly once',async()=>{
+ const list=[entity('battery_voltage'),entity('battery_fault'),entity('inverter_grid_frequency'),entity('pv1_voltage'),entity('total_energy_from_pv'),entity('dispatch_mode'),entity('inverter_temperature'),entity('future_metric'),entity('battery_full_soc','binary_sensor'),entity('peak_shaving','switch'),entity('hidden','sensor','first','one',{hidden_by:'user'}),entity('disabled','sensor','first','one',{disabled_by:'integration'})];
+ const view=await View.generate({page:'diagnostics',device_id:'one'},hass(list));
+ assert.equal(view.type,'panel');assert.equal(view.title,'Diagnostics');
+ const card=view.cards[0];assert.equal(card.type,'custom:alphaess-summary');assert.equal(card.page,'diagnostics');
+ const shown=card.groups.flatMap(g=>g.items.map(i=>i.entity));
+ const expected=list.filter(e=>!e.hidden_by&&!e.disabled_by&&!e.entity_id.startsWith('switch.')).map(e=>e.entity_id);
+ assert.deepEqual(shown.sort(),expected.sort());assert.equal(new Set(shown).size,shown.length);
+ assert.deepEqual(new Set(card.groups.map(g=>g.title)),new Set(['Battery','Faults & warnings','Grid','Solar','Energy','Dispatch & operating status','Inverter & system','Other sensors']));
+});
+
+test('diagnostic labels preserve full names and open only more-info',()=>{
+ const full='Battery Maximum Cell Temperature';
+ const device=discoverDevices([entity('battery_max_cell_temp','sensor','first','one',{original_name:full})],devices,'one')[0];
+ const groups=groupsFor(device,'diagnostics');assert.equal(groups[0].items[0].label,'max Cell temp');
+ const card=document.createElement('alphaess-summary'),h=hass();card.setConfig({page:'diagnostics',groups});card.hass=h;
+ const button=card.shadowRoot.querySelector('button');assert.match(button.getAttribute('aria-label'),/Battery Maximum Cell Temperature/);
+ assert.ok(card.shadowRoot.querySelector('.panels'));assert.equal(card.shadowRoot.querySelector('.controls'),null);
+ let id;card.addEventListener('hass-more-info',e=>id=e.detail.entityId);button.click();assert.equal(id,'sensor.renamed_first_battery_max_cell_temp');assert.deepEqual(h.calls,[]);
+});
