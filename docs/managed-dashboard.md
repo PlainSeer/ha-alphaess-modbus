@@ -1,0 +1,101 @@
+# Optional managed AlphaESS dashboard
+
+The bundled dashboard discovers enabled AlphaESS Modbus entities and groups them
+into **Overview**, **Controls** and **Diagnostics**. It uses the integration's
+entity registry identifiers, so entity renaming does not require manual YAML edits.
+Each inverter gets its own views. Hidden and disabled entities are omitted.
+
+The layout uses 95% of the available view width, with two columns of panels on
+larger screens, stacked panels on phones and short single-line tile labels.
+Long labels retain their full text in the tile's details/accessible description.
+No third-party dashboard cards are required.
+
+## Examples
+
+These screenshots use invented values and the actual bundled card in a local
+preview. They are examples, not readings from a live installation. Panels and
+settings depend on which entities you have enabled.
+
+![AlphaESS Overview with example values](images/dashboard-overview.png)
+
+![AlphaESS Controls including optional Peak Shaving, all modes off](images/dashboard-controls.png)
+
+## Add once
+
+After installing a release containing this feature, restart Home Assistant and
+refresh the browser/app frontend.
+
+On HA 2026.5 or newer, go to **Settings → Dashboards → Add dashboard**, choose
+**AlphaESS** under community dashboards, then choose the title/sidebar settings.
+
+Alternatively, create a new empty dashboard, open its raw configuration editor,
+and use the complete contents of [`managed_dashboard.yaml`](../examples/managed_dashboard.yaml):
+
+```yaml
+strategy:
+  type: custom:alphaess-modbus
+```
+
+The integration registers its frontend module automatically. No resource URL or
+separate HACS frontend download is needed. If the strategy is not available,
+refresh the frontend after restarting HA and check the logs for
+`Could not load optional AlphaESS dashboard module`.
+
+## Replace a view in an existing dashboard
+
+Back up that view's YAML first. Replace **only the selected view's configuration**
+with the appropriate example from [`managed_view.yaml`](../examples/managed_view.yaml):
+
+```yaml
+title: AlphaESS
+path: alphaess
+strategy:
+  type: custom:alphaess-modbus
+  page: overview
+```
+
+Use `page: controls` or `page: diagnostics` for additional views. Do not paste a
+whole-dashboard `strategy:` configuration over a dashboard containing unrelated
+views. With more than one inverter, set `device_id` under the view's strategy to
+the HA device registry ID (the final ID in that device page's URL), not its entity
+ID or IP address. The full managed dashboard discovers all inverters automatically.
+
+## Updates and customisation
+
+The one-time strategy configuration remains in HA. After integration updates,
+restart HA and refresh the frontend to load the updated layout. No existing
+dashboard is created, overwritten or migrated automatically.
+
+A managed view follows the bundled design. To customise individual cards freely,
+use the older static YAML examples instead; copied static cards remain yours and
+do not update automatically. Keep your original dashboard until you are happy
+with the replacement. Removing a managed dashboard/view removes only that layout;
+it does not delete the integration, entities, history or inverter settings.
+
+## Data and controls
+
+Overview shows existing sensor states. The daily accumulated house-load value is
+separate from the daily energy-balance estimate, which can decrease. An incomplete
+day is marked when the accumulated sensor reports missing coverage. See
+[energy calculation limits](passive-house-energy.md).
+
+Opening the dashboard reads HA's registries and displays existing states. It does
+not poll Modbus separately, alter registers, call services or enable modes. A tile
+opens HA's normal more-info dialog; explicitly changing a setting there uses the
+existing integration control. Maintenance buttons remain in their own labelled
+group. Existing permissions still apply.
+
+Peak Shaving is shown alongside its existing settings, including its upper
+**Below SoC** threshold and read-only lower cutoff. Adding this dashboard does not
+enable it. Read the [Peak Shaving guide](peak-shaving.md) before using it.
+
+## Compatibility and checks
+
+Frontend publishing is tested against HA 2024.12.5 and 2026.10.0. The community
+picker is available from HA 2026.5; older installations can use the YAML strategy.
+Discovery and rendering tests cover renamed entities, multiple inverters,
+disabled/hidden entities, missing data, connection failures and passive tile
+interactions. Local browser checks use example data, not a live inverter.
+
+Home Assistant's [dashboard strategy documentation](https://developers.home-assistant.io/docs/frontend/custom-ui/custom-strategy/)
+describes the underlying dashboard/view configuration.

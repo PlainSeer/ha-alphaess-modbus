@@ -1,0 +1,8 @@
+# One view only. Back up the existing view before replacing it.
+title: AlphaESS
+path: alphaess
+strategy:
+  type: custom:alphaess-modbus
+  page: overview  # overview, controls or diagnostics
+  # Required for a single view when more than one AlphaESS inverter is configured:
+  # device_id: YOUR_HA_DEVICE_REGISTRY_ID

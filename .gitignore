@@ -9,8 +9,7 @@ integration_alpha_ess.yaml
 # Local reference docs (manufacturer PDFs, datasheets, etc.)
 docs/*.pdf
 
-# Tests (local only, not published to HACS/GitHub)
-tests/
+# Test scratch files
 pytest.ini
 requirements-test.txt
 .pytest_cache/
@@ -30,3 +29,6 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Frontend test dependencies
+node_modules/

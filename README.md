@@ -531,6 +531,20 @@ If two inverters are configured, the service writes the same value to all instan
 
 ## Dashboards
 
+The **optional managed dashboard** provides Overview, Controls (including Peak
+Shaving) and Diagnostics, with automatic discovery of your integration entities.
+Add it once; its layout follows future integration updates after restart and a
+frontend refresh. It does not overwrite existing dashboards or enable controls.
+No third-party cards are required. See the [setup and replacement guide](docs/managed-dashboard.md).
+
+Example data shown below; your enabled entities determine the visible panels.
+
+![Managed AlphaESS Overview — example values](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-overview.png)
+
+![Managed AlphaESS Controls — example values, all modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-controls.png)
+
+### Static dashboard examples
+
 Example Lovelace dashboard configurations are included in the [`examples/`](examples/) folder:
 
 | File | Description | Custom cards required |

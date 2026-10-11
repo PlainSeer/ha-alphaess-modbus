@@ -29,6 +29,19 @@ These passive sensors use data already read by the integration, without adding r
 
 Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have not been adopted, and optional PV energy registers are not included.
 
+## Optional managed dashboard
+
+Overview, Controls (including Peak Shaving) and Diagnostics, with automatic entity
+discovery and no extra custom-card dependencies. Add it once; the layout follows
+integration updates after restart and frontend refresh. Existing dashboards are
+not overwritten, and viewing it does not enable inverter controls.
+
+[Dashboard setup and replacement guide](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/managed-dashboard.md).
+
+![AlphaESS Overview — example values](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-overview.png)
+
+![AlphaESS Controls — example values, all modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-controls.png)
+
 ## Documentation and installation
 
 For requirements, setup, controls and limitations, see the [README](https://github.com/PlainSeer/ha-alphaess-modbus#readme), [energy calculation notes](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/passive-house-energy.md) and [release history](https://github.com/PlainSeer/ha-alphaess-modbus/releases).
