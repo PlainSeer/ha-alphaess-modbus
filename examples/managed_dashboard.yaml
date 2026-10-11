@@ -1,0 +1,3 @@
+# Complete dashboard configuration. Do not paste over unrelated existing views.
+strategy:
+  type: custom:alphaess-modbus

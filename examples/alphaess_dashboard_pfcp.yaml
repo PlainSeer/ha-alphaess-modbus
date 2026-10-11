@@ -396,3 +396,21 @@ sections:
             name: Restart EMS
           - entity: button.alphaess_inverter_reset_energy_totals
             name: Reset Energy Totals
+
+  # Optional Peak Shaving. Static example: verify your own entity IDs.
+  - type: grid
+    cards:
+      - type: entities
+        title: Peak Shaving (optional)
+        show_header_toggle: false
+        entities:
+          - entity: switch.alphaess_inverter_peak_shaving
+            name: Peak Shaving
+          - entity: number.alphaess_inverter_peak_shaving_grid_import_limit
+            name: Grid import target
+          - entity: number.alphaess_inverter_peak_shaving_below_soc
+            name: Below SoC
+          - entity: sensor.alphaess_inverter_discharging_cutoff_soc
+            name: Lower cutoff (read-only)
+          - entity: binary_sensor.alphaess_inverter_peak_shaving_paused
+            name: Paused
