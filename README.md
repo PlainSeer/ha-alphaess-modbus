@@ -25,6 +25,8 @@ No cloud account required. All communication is direct to the inverter on your l
 
 The optional dashboard includes **Overview**, **Controls** and **Diagnostics**, with no extra custom-card downloads. [See setup instructions](docs/managed-dashboard.md).
 Diagnostics uses compact name/value rows in two columns of panels, stacking on phones.
+The integration also maintains its own dashboard module resource in storage mode as a fallback loading path; see the setup guide for YAML mode and troubleshooting.
+Diagnostic builds can show a loading report; see [loading diagnostics](docs/managed-dashboard.md#loading-diagnostics).
 
 Example values shown; the visible panels depend on your enabled entities.
 
