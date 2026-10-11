@@ -1,0 +1,27 @@
+"""Publish the optional dashboard module; never edits dashboards or entities."""
+from hashlib import sha256
+import logging
+from pathlib import Path
+
+from homeassistant.components.frontend import add_extra_js_url
+from homeassistant.components.http import StaticPathConfig
+from homeassistant.core import HomeAssistant
+
+_LOGGER = logging.getLogger(__name__)
+MODULE_PATH = Path(__file__).parent / "frontend" / "alphaess-dashboard.js"
+MODULE_URL = "/alphaess_modbus/alphaess-dashboard.js"
+
+
+async def async_setup_dashboard(hass: HomeAssistant) -> None:
+    """Frontend is optional; its failure must not prevent inverter setup."""
+    if "frontend" not in hass.config.components:
+        return
+    try:
+        content = await hass.async_add_executor_job(MODULE_PATH.read_bytes)
+        digest = sha256(content).hexdigest()[:16]
+        await hass.http.async_register_static_paths([
+            StaticPathConfig(MODULE_URL, str(MODULE_PATH), cache_headers=False)
+        ])
+        add_extra_js_url(hass, f"{MODULE_URL}?v={digest}")
+    except Exception:
+        _LOGGER.exception("Could not load optional AlphaESS dashboard module")

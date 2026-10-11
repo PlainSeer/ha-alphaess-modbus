@@ -43,6 +43,14 @@ def _detect_model(raw_sn: str) -> str:
     return raw_sn[:20].strip() or "SMILE series"
 
 
+async def async_setup(hass: HomeAssistant, config: dict) -> bool:
+    """Register optional frontend assets without changing integration entries."""
+    from .dashboard import async_setup_dashboard
+
+    await async_setup_dashboard(hass)
+    return True
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     from homeassistant.exceptions import ConfigEntryNotReady
 

@@ -1,6 +1,7 @@
 {
   "domain": "alphaess_modbus",
   "name": "AlphaESS Modbus TCP",
+  "after_dependencies": ["frontend"],
   "codeowners": ["@senalse"],
   "config_flow": true,
   "documentation": "https://github.com/senalse/ha-alphaess-modbus",
