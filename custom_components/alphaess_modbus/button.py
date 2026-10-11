@@ -77,6 +77,11 @@ class AlphaESSButton(ButtonEntity):
 
     async def async_press(self, **kwargs: Any) -> None:
         if self._key == "dispatch_reset":
+            switches = self.hass.data[DOMAIN].get(f"{self._entry_id}_switches", {})
+            peak = switches.get("peak_shaving")
+            if peak and (peak.is_on or peak.stopping):
+                # Drain its in-flight command before the explicit reset.
+                await peak.async_force_off()
             await self._coordinator.async_reset_dispatch()
         elif self._key == "synchronise_date_time":
             await self._coordinator.async_sync_datetime()

@@ -21,6 +21,7 @@ async def async_setup_entry(
         AlphaESSExcessExportPauseSensor(coordinator, entry),
         AlphaESSForceImportPauseSensor(coordinator, entry),
         AlphaESSBatteryFullSensor(coordinator, entry),
+        AlphaESSPeakShavingPauseSensor(coordinator, entry),
     ])
 
 
@@ -97,3 +98,23 @@ class AlphaESSBatteryFullSensor(CoordinatorEntity, BinarySensorEntity):
         if not self.available:
             return None
         return float(self.coordinator.data["battery_status"]) == 1
+
+
+class AlphaESSPeakShavingPauseSensor(CoordinatorEntity, BinarySensorEntity):
+    """Passive view of the optional peak-shaving controller."""
+
+    _attr_has_entity_name = True
+    _attr_name = "Peak Shaving Paused"
+    _attr_icon = "mdi:pause-circle"
+
+    def __init__(self, coordinator, entry):
+        super().__init__(coordinator)
+        self._entry_id = entry.entry_id
+        self._attr_unique_id = f"{entry.entry_id}_peak_shaving_paused"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)})
+
+    @property
+    def is_on(self):
+        switches = self.hass.data[DOMAIN].get(f"{self._entry_id}_switches", {})
+        peak = switches.get("peak_shaving")
+        return bool(peak and peak.is_on and peak.paused)
