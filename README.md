@@ -21,6 +21,21 @@ No cloud account required. All communication is direct to the inverter on your l
 > **You are responsible for deciding whether to use this software and for its operation on your equipment.** It is provided “as is”, without warranty, subject to the terms of the [MIT licence](LICENSE).
 
 
+## Dashboard preview
+
+The optional dashboard includes **Overview**, **Controls** and **Diagnostics**, with no extra custom-card downloads. [See setup instructions](docs/managed-dashboard.md).
+
+Example values shown; the visible panels depend on your enabled entities.
+
+![Managed AlphaESS Overview — example values](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-overview.png)
+
+<details>
+<summary>See the Controls layout, including Peak Shaving</summary>
+
+![Managed AlphaESS Controls — example values, all modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-controls.png)
+
+</details>
+
 ## About this fork
 
 **PlainSeer/ha-alphaess-modbus** continues from [Senalse's integration](https://github.com/senalse/ha-alphaess-modbus) at v1.14.0. The original Python integration is Senalse's work, based on [Axel Koegler's Hillview AlphaESS YAML package](https://projects.hillviewlodge.ie/alphaess/).
@@ -536,12 +551,6 @@ Shaving) and Diagnostics, with automatic discovery of your integration entities.
 Add it once; its layout follows future integration updates after restart and a
 frontend refresh. It does not overwrite existing dashboards or enable controls.
 No third-party cards are required. See the [setup and replacement guide](docs/managed-dashboard.md).
-
-Example data shown below; your enabled entities determine the visible panels.
-
-![Managed AlphaESS Overview — example values](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-overview.png)
-
-![Managed AlphaESS Controls — example values, all modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-controls.png)
 
 ### Static dashboard examples
 
