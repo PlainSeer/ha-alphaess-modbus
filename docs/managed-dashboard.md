@@ -10,7 +10,9 @@ larger screens, stacked panels on phones and short single-line tile labels.
 Long labels retain their full text in the tile's details/accessible description.
 Diagnostics uses the same panels, grouping battery, grid, solar, energy, dispatch,
 inverter/system and fault sensors. Other enabled sensors remain available in a
-fallback group; full sensor names are retained in details.
+fallback group. Each diagnostic sensor uses a compact name/value row, without
+repeated icons. Full names appear on the left and values on the right; long names
+wrap on narrow screens. The two panel columns stack on phones.
 No third-party dashboard cards are required.
 
 ## Examples
