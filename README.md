@@ -41,7 +41,7 @@ All three report watts. On each source-value change, the filter uses 80% of its 
 
 These are **passive HA-side additions using data already read by the integration**. Existing raw sensors and inverter controls do not consume the new filtered values. The house-load filter preserves this fork's existing house-load calculation, so it is not an exact copy of Hillview's house-load behaviour.
 
-**No Modbus register addresses, mappings, reads, writes or polling were added, removed or altered.** Existing domain, configuration-entry format, entity identities and PredBat-facing entities are preserved. Our maintenance boundary is to leave the existing Modbus register and polling implementation unchanged.
+**These passive sensor additions do not alter Modbus register addresses, mappings, reads, writes or polling.** Existing domain, configuration-entry format, entity identities and PredBat-facing entities are preserved. Our maintenance boundary is to leave the existing Modbus register and polling implementation unchanged.
 
 ### Additional passive sensors
 
@@ -67,13 +67,15 @@ Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitor
 
 ### Validation
 
-The 51 isolated sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12; HACS and hassfest checks also pass. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
+The test workflow covers HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12, alongside HACS and hassfest validation. See the pull request checks for each change. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
 
 
 
 ---
 
 ## Features
+
+Version-specific changes and acknowledgements are recorded in the [release notes](https://github.com/PlainSeer/ha-alphaess-modbus/releases).
 
 - **Power, energy and diagnostic sensors** - real-time power flows, battery SoC/SoH, cell voltages, temperatures, voltages, energy totals, daily energy summaries, dispatch diagnostics, grid safety parameters, faults & warnings
 - **Force Charging** - charge battery from grid at configurable power (kW), duration, and cutoff SoC
@@ -84,6 +86,7 @@ The 51 isolated sensor tests pass on HA 2026.10.0 / Python 3.14 and HA 2024.12.5
 - **Force Export Hold** - keeps Force Export running indefinitely after the duration expires; turn on before starting Force Export for continuous export without a time limit
 - **Force Import** - import from grid at a configurable target kW, dynamically adjusting battery charge to offset live PV so total grid draw stays at the target; stops at cutoff SoC
 - **Force Import Hold** - keeps Force Import running indefinitely after the duration expires; turn on before starting Force Import for continuous importing without a time limit
+- **Peak Shaving (optional)** - off by default; uses existing dispatch controls to reduce grid import towards a target. See [setup, behaviour and simulation limits](docs/peak-shaving.md) before enabling.
 - **Excess Export** - charge the battery with PV power that would otherwise be clipped by the inverter AC output limit; automatically pauses when the house starts drawing from the grid and resumes once PV recovers
 - **Dispatch PV Enabled** - enable or disable the inverter's PV coupling during an active dispatch (useful for shedding solar in negative-price periods); defaults to on (PV enabled). Toggling it while a dispatch is running applies immediately; otherwise it takes effect on the next dispatch
 - **Battery cell health** - min/max cell voltages polled every 60 s; charge/discharge cutoff voltages, module count, capacity, and type available as diagnostic sensors

@@ -38,6 +38,10 @@ No Modbus register addresses, mappings, reads, writes or polling were changed by
 
 Hillview 11.2 import pause/resume and 11.3 Cutoff SoC Hold monitoring changes are not adopted.
 
+## Optional Peak Shaving
+
+Off by default. Uses existing dispatch controls to reduce grid import towards a target when explicitly enabled. See the [feature guide and limitations](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/peak-shaving.md).
+
 ## Documentation and installation
 
 For requirements, setup, controls and limitations, see the [README](https://github.com/PlainSeer/ha-alphaess-modbus#readme), [energy calculation notes](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/passive-house-energy.md) and [release history](https://github.com/PlainSeer/ha-alphaess-modbus/releases).

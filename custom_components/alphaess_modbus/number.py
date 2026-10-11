@@ -28,6 +28,8 @@ DISPATCH_PARAM_KEYS = {
     "dispatch_cutoff_soc",
     "dispatch_duration",
     "dispatch_power",
+    "peak_shaving_power",
+    "peak_shaving_cutoff_soc",
 }
 
 # Maps param key prefix (or exact key) to the switch that owns it
@@ -37,6 +39,7 @@ _PARAM_SWITCH = {
     "force_export": "force_export",
     "force_import": "force_import",
     "dispatch": "dispatch",
+    "peak_shaving": "peak_shaving",
 }
 
 
@@ -44,9 +47,11 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     coordinator: AlphaESSCoordinator = hass.data[DOMAIN][entry.entry_id]
+    from .peak_shaving import PEAK_NUMBERS
+
     async_add_entities(
         AlphaESSNumber(coordinator, entry, reg)
-        for reg in NUMBER_REGISTERS
+        for reg in [*NUMBER_REGISTERS, *PEAK_NUMBERS]
     )
 
 

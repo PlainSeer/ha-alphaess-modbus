@@ -33,7 +33,7 @@ Downloaded YAML identifies version 11.3 (2026-08-21); SHA256:
 | PV energy registers | Current Hillview YAML does not contain 0x08D0/0x08D2 or the previously claimed PV Inverter/System Total Energy entities. | Do not add based on the prior conversation. Verify manufacturer definitions/model support first. |
 | Optional read isolation | Coordinator groups adjacent numeric registers and counts failed blocks toward aborting a refresh. Registry-disabled entities are still polled. | Any future optional reads need genuine opt-in polling and separate failure isolation; enabled_by_default=False alone is insufficient. |
 | PV offset/calibration | Hillview provides helper and derived calibrated total. | Optional later addition; retain existing energy sources. |
-| Peak shaving | Hillview control feature absent. | Out of this passive tranche; separate justification/approval. |
+| Peak shaving | Separate optional implementation, off by default, following later approval. | Uses existing dispatch API; see [behaviour and intentional differences](peak-shaving.md). Not part of the original passive tranche. |
 | Force Import/Export | Fork uses a grid-error servo with gain 0.3, 80 W deadband, 60 s refresh. Commit 656ca47 explains the prior oscillation from battery-derived house-load feedback. | Retain. Copying Hillview's filtered load feedback would replace working control logic, not merely add sensors. |
 
 ## Hold monitoring comparison

@@ -72,6 +72,7 @@ _MUTEX_SWITCHES = [
     "force_import",
     "dispatch",
     "excess_export",
+    "peak_shaving",
 ]
 
 SWITCH_DEFS = [
@@ -95,7 +96,10 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     coordinator: AlphaESSCoordinator = hass.data[DOMAIN][entry.entry_id]
+    from .peak_shaving import AlphaESSPeakShavingSwitch
+
     entities = [AlphaESSSwitch(coordinator, entry, d) for d in SWITCH_DEFS]
+    entities.append(AlphaESSPeakShavingSwitch(coordinator, entry))
 
     # Store references so switches can interact with each other
     hass.data[DOMAIN][f"{entry.entry_id}_switches"] = {e.switch_key: e for e in entities}
@@ -183,6 +187,12 @@ class AlphaESSSwitch(RestoreEntity, SwitchEntity):
             self._is_on = True
             self.async_write_ha_state()
             return
+
+        # A peak-shaving stop can already be waiting for an in-flight write.
+        # Drain it before another mode starts, even though its switch is now off.
+        peak = self.hass.data[DOMAIN].get(f"{self._entry.entry_id}_switches", {}).get("peak_shaving")
+        if peak and peak.stopping:
+            await peak._async_turn_off_silent()
 
         # Mutual exclusion: turn off all other mutex switches first
         switches = self.hass.data[DOMAIN].get(f"{self._entry.entry_id}_switches", {})
