@@ -35,6 +35,7 @@ Overview, Controls (including Peak Shaving) and Diagnostics, with automatic enti
 discovery and no extra custom-card dependencies. Add it once; the layout follows
 integration updates after restart and frontend refresh. Existing dashboards are
 not overwritten, and viewing it does not enable inverter controls.
+Diagnostics uses compact name/value rows in two columns of panels, stacking on phones.
 
 [Dashboard setup and replacement guide](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/managed-dashboard.md).
 

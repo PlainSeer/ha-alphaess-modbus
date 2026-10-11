@@ -77,5 +77,10 @@ test('diagnostic labels preserve full names and open only more-info',()=>{
  const card=document.createElement('alphaess-summary'),h=hass();card.setConfig({page:'diagnostics',groups});card.hass=h;
  const button=card.shadowRoot.querySelector('button');assert.match(button.getAttribute('aria-label'),/Battery Maximum Cell Temperature/);
  assert.ok(card.shadowRoot.querySelector('.panels'));assert.equal(card.shadowRoot.querySelector('.controls'),null);
+ assert.ok(card.shadowRoot.querySelector('.diagnostics'));assert.equal(card.shadowRoot.querySelectorAll('.column').length,2);
+ assert.equal(button.querySelector('.label').textContent,full);assert.equal(button.querySelector('ha-icon'),null);
+ h.states['sensor.renamed_first_battery_max_cell_temp']={state:'22',attributes:{unit_of_measurement:'°C'}};card.hass=h;
+ assert.equal(button.querySelector('.value').textContent,'22°C');
+ h.states={};card.hass=h;assert.equal(button.querySelector('.value').textContent,'Unavailable');
  let id;card.addEventListener('hass-more-info',e=>id=e.detail.entityId);button.click();assert.equal(id,'sensor.renamed_first_battery_max_cell_temp');assert.deepEqual(h.calls,[]);
 });

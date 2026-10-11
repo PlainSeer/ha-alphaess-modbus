@@ -21,6 +21,20 @@ for(const group of [...OVERVIEW,...CONTROLS])for(const item of group.items){
  seen.add(id);entities.push({entity_id:id,unique_id:`example_${item.key}`,config_entry_id:'example',device_id:'example-device',platform:'alphaess_modbus'});
  states[id]={state:String(v[0]),attributes:{unit_of_measurement:v[1]}};
 }
+// Include realistic long names and diagnostic-only sensors in the row preview.
+for(const [key,name,value,unit] of [
+ ['battery_fault','Battery Fault',0,''],['inverter_warning_2','Inverter Warning 2',131072,''],
+ ['charging_period_1_start_minute','Charging Period 1 Start Minute',30,'min'],
+ ['total_energy_from_pv','Total Energy from PV',8.58,'MWh'],
+]) {
+ const id=`sensor.example_${key}`;
+ entities.push({entity_id:id,unique_id:`example_${key}`,config_entry_id:'example',device_id:'example-device',platform:'alphaess_modbus',original_name:name});
+ states[id]={state:String(value),attributes:{unit_of_measurement:unit}};
+}
+for(const entity of entities)entity.original_name ||= entity.unique_id.replace(/^example_/,'').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
+entities.find(e=>e.unique_id==='example_battery_max_cell_temp').original_name='Battery Maximum Cell Temperature';
+entities.find(e=>e.unique_id==='example_house_load_energy_today').original_name='House Load Energy Today Accumulated';
+states['sensor.example_house_load_energy_today'].attributes.incomplete_day=true;
 const device=discoverDevices(entities,[{id:'example-device',name:'AlphaESS inverter'}])[0];
 const card=document.querySelector('alphaess-summary');
 const fontStyle='/node_modules/@mdi/font/css/materialdesignicons.min.css';

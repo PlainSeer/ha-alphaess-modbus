@@ -236,6 +236,7 @@ h2{font-size:17px;font-weight:700;margin:0;padding:14px 18px 10px;border-bottom:
 button{font:inherit;color:inherit;background:none;border:0;border-radius:10px;min-width:0;padding:8px 2px 6px;cursor:pointer;text-align:center}button:hover{background:var(--secondary-background-color)}button:focus-visible{outline:2px solid var(--primary-color);outline-offset:-2px}
 ha-icon{display:block;--mdc-icon-size:26px;width:26px;height:28px;margin:auto}.value{font-size:14px;font-weight:700;line-height:1.3;margin-top:4px;overflow-wrap:anywhere}.unit{font-size:10.5px;font-weight:600;color:var(--secondary-text-color);margin-left:2px}.label{font-size:12px;color:var(--secondary-text-color);line-height:1.3;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.detail{font-size:11px;color:var(--secondary-text-color);padding:0 12px 8px}
 .controls .items{display:block;padding:4px 18px}.controls button{display:grid;grid-template-columns:26px minmax(0,1fr) auto;align-items:center;gap:12px;width:100%;border-radius:0;border-bottom:1px solid var(--divider-color);padding:13px 0;text-align:left}.controls button:last-child{border-bottom:0}.controls .label{grid-column:2;grid-row:1;font-size:14px;color:var(--primary-text-color)}.controls .value{grid-column:3;grid-row:1;margin:0;font-weight:500}.controls .status{grid-column:2 / 4}.status{font-size:11px;color:var(--secondary-text-color);margin-top:4px}
+.diagnostics .items{display:block;padding:0 18px}.diagnostics button{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);align-items:center;column-gap:20px;width:100%;min-height:48px;padding:11px 0;border-radius:0;border-bottom:1px solid var(--divider-color);text-align:left}.diagnostics button:last-child{border-bottom:0}.diagnostics .label{grid-column:1;grid-row:1;font-size:14px;color:var(--primary-text-color);white-space:normal;overflow:visible;overflow-wrap:anywhere;margin:0}.diagnostics .value{grid-column:2;grid-row:1;margin:0;text-align:right;font-weight:500;font-variant-numeric:tabular-nums}.diagnostics .unit{font-size:12px;font-weight:400;margin-left:4px}.diagnostics .status{grid-column:1 / -1;grid-row:2}
 @media(max-width:650px){.wrap{width:95%;margin:10px auto 24px}.panels{grid-template-columns:1fr;gap:10px}}
 @media(max-width:540px){.items{grid-template-columns:repeat(2,minmax(0,1fr))}}
 `;
@@ -245,7 +246,7 @@ export class AlphaESSSummary extends HTMLElement {
   setConfig(config) {
     this._config=config;this._rows=[];this.shadowRoot.replaceChildren();
     this.shadowRoot.append(el("style",CSS));
-    const wrap=el("div",undefined,config.page === "controls" ? "wrap controls" : "wrap"), intro=el("header",undefined,"intro");
+    const wrap=el("div",undefined,config.page === "controls" ? "wrap controls" : config.page === "diagnostics" ? "wrap diagnostics" : "wrap"), intro=el("header",undefined,"intro");
     intro.append(el("h1",config.title || "AlphaESS"));
     intro.append(el("p",config.page === "controls" ? "Tap a tile to open Home Assistant controls. Opening this page does not change inverter settings." : config.page === "diagnostics" ? "Enabled sensors grouped by function. Tap a value for its full name, history and details." : "Live power, battery and energy. Tap a value for history and details."));
     const panels=el("div",undefined,"panels");
@@ -259,7 +260,9 @@ export class AlphaESSSummary extends HTMLElement {
         const button=el("button"), icon=el("ha-icon"), value=el("span"), unit=el("span",undefined,"unit"), line=el("div",undefined,"value");
         button.type="button"; icon.setAttribute("icon",item.icon || "mdi:information-outline");
         const status=el("div",undefined,"status");status.hidden=true;
-        line.append(value,unit);button.append(icon,line,el("div",item.label,"label"),status);
+        line.append(value,unit);
+        if(config.page === "diagnostics") button.append(el("div",item.fullLabel || item.label,"label"),line,status);
+        else button.append(icon,line,el("div",item.label,"label"),status);
         button.addEventListener("click",()=>this.dispatchEvent(new CustomEvent("hass-more-info",{detail:{entityId:item.entity},bubbles:true,composed:true})));
         grid.append(button);this._rows.push({item,button,icon,value,unit,status});
       }
