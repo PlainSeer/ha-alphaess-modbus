@@ -14,7 +14,7 @@ No cloud account required. All communication is direct to the inverter on your l
 > ## USE AT YOUR OWN RISK
 > **This is an unofficial community-maintained fork, not an AlphaESS product or a supported service. There is no guarantee of fitness, reliability or compatibility with your installation.**
 >
-> **The integration includes inherited controls that write to your inverter's Modbus registers.** The new v1.15.0 sensors are passive, but the integration as a whole is not read-only. Incorrect settings, incompatible firmware or conflicting control automations can cause unexpected charging, discharging or export, financial loss, or damage to equipment.
+> **The integration includes controls that write to your inverter's Modbus registers.** Its derived sensors are passive, but the integration as a whole is not read-only. Incorrect settings, incompatible firmware or conflicting control automations can cause unexpected charging, discharging or export, financial loss, or damage to equipment.
 >
 > Keep a restorable Home Assistant backup and understand your existing inverter controls before installing or updating. Review changes and verify your own installation after updating. Automated test success is not a safety certification.
 >
@@ -25,51 +25,32 @@ No cloud account required. All communication is direct to the inverter on your l
 
 **PlainSeer/ha-alphaess-modbus** continues from [Senalse's integration](https://github.com/senalse/ha-alphaess-modbus) at v1.14.0. The original Python integration is Senalse's work, based on [Axel Koegler's Hillview AlphaESS YAML package](https://projects.hillviewlodge.ie/alphaess/).
 
-This fork exists to maintain our installation and selectively adopt useful HA-side improvements while preserving working inverter controls and PredBat compatibility. Upstream appears inactive: as checked on **10 October 2026**, its latest default-branch commit was [the v1.14.0 release on 7 June 2026](https://github.com/senalse/ha-alphaess-modbus/commit/3b944d6bbba8cae6ccc6f58ca99f2ec8a6e46563). This is an observation about published commits, not a claim that the author has abandoned the project. We retain the fork relationship and upstream attribution.
+This fork maintains the integration and selectively adopts useful HA-side improvements while preserving existing entities, configuration compatibility and working inverter controls. Upstream appears inactive: as checked on **10 October 2026**, its latest default-branch commit was [the v1.14.0 release on 7 June 2026](https://github.com/senalse/ha-alphaess-modbus/commit/3b944d6bbba8cae6ccc6f58ca99f2ec8a6e46563). This is an observation about published commits, not a claim that the author has abandoned the project. We retain the fork relationship and upstream attribution.
 
-### Added in this fork: v1.15.0
+### Sensors and feature guides
 
-Inspired by the filtered-power approach in [Hillview's package and change history](https://projects.hillviewlodge.ie/_alphaess/integration_alpha_ess.txt):
+The fork adds passive sensors using data already read by the integration. They do not add register reads or writes, change polling, or replace existing entities and controls.
 
-| New sensor | What it does |
+| Sensor | Purpose and limitations |
 | --- | --- |
-| Current House Load Filtered | Smooths the existing raw house-load calculation. |
-| Current PV Production Filtered | Smooths the existing raw PV-production calculation. |
-| Excess Power | Subtracts filtered house load from filtered PV production and clamps the result at zero. This is an estimate, not an export command or a guarantee of available inverter capacity. |
+| Current House Load Filtered / Current PV Production Filtered | Smooth the existing power calculations, in watts. These displayed values do not drive inverter controls. |
+| Excess Power | Filtered PV minus filtered house load, clamped at zero. An estimate, not an export command or a guarantee of available inverter capacity. |
+| Battery Full | On when existing raw battery status is `1` (charging not permitted, discharging permitted), matching Hillview. Invalid, missing or unrecognised status makes it unavailable. |
+| Today's House Energy | Daily import − export + PV − battery charged + battery discharged. Includes AC PV once; this balance can decrease during the day. |
+| House Energy Since Tracking | Accumulates from zero when first enabled using existing counter changes and observed AC-PV power. **Not lifetime house consumption.** |
+| House Load Energy Today (Accumulated) | Integrates existing raw house-load power into kWh. Only increases within a day, resets at HA-local midnight, and restores same-day totals after restart. |
 
-All three report watts. On each source-value change, the filter uses 80% of its previous filtered value and 20% of the new value, rounded to two decimal places. Unchanged values do not advance the filter. Filters initialize from current readings after restart and reset after unavailable input; their history is not restored.
+The displayed power filters use 80% previous value and 20% new value on source-value changes; unchanged values do not advance them. They initialise from current readings after restart and reset after unavailable input. The house-load calculation retains this fork's existing behaviour rather than exactly copying Hillview.
 
-These are **passive HA-side additions using data already read by the integration**. Existing raw sensors and inverter controls do not consume the new filtered values. The house-load filter preserves this fork's existing house-load calculation, so it is not an exact copy of Hillview's house-load behaviour.
+Energy estimates can have gaps and do not automatically replace existing helpers or automations. The accumulated daily sensor starts when enabled; missing/stale samples and gaps over 60 seconds are omitted and flagged as `incomplete_day`. See the [energy calculations and limitations](docs/passive-house-energy.md) before using these sensors.
 
-**These passive sensor additions do not alter Modbus register addresses, mappings, reads, writes or polling.** Existing domain, configuration-entry format, entity identities and PredBat-facing entities are preserved. Our maintenance boundary is to leave the existing Modbus register and polling implementation unchanged.
+[Optional Peak Shaving](docs/peak-shaving.md) uses existing dispatch controls when explicitly enabled. It is **off by default and after restart**, simulation-tested rather than hardware-tested, and cannot guarantee a hard import cap.
 
-### Additional passive sensors
-
-Introduced in v1.16.0. The Battery Full status correction below was added in v1.17.1.
-
-| New entity | Meaning |
-| --- | --- |
-| Battery Full | On when existing raw battery status is `1`, matching Hillview (charging not permitted, discharging permitted). Corrects the former SoC-only indicator while preserving its entity ID. Invalid/missing or unrecognised status makes it unavailable. |
-| Today's House Energy | Existing daily import − export + PV − battery charged + battery discharged. Existing daily PV already includes AC PV. |
-| House Energy Since Tracking | Starts at zero when first enabled; accumulates the same balance from existing counter changes, plus observed positive AC-PV power. **Not lifetime house consumption.** |
-
-These are comparison sensors for future evaluation. They do not replace PredBat's load helpers, alter existing controls, or change any Modbus reads, writes, mappings or polling. See [calculation and limitations](docs/passive-house-energy.md) before using the energy estimates.
-
-### House Load Energy Today (Accumulated): v1.17.0
-
-A separate daily kWh counter integrates the existing raw Current House Load calculation over time. It only increases or stays unchanged within a day and resets at local midnight using Home Assistant's timezone. Same-day totals restore after restart. It does not replace Today's House Energy, which remains the counter-balance comparison sensor, or any existing PredBat helper.
-
-The first day starts when enabled. Missing/stale readings and gaps longer than 60 seconds are omitted and flagged as `incomplete_day`; downtime cannot be reconstructed. See [calculation details](docs/passive-house-energy.md#house-load-energy-today-accumulated).
-
-### Not included
-
-Hillview 11.2 Force Import pause/resume changes and 11.3 Cutoff SoC Hold monitoring changes have **not** been adopted. Optional PV energy registers are not included. The existing integration's control behaviour remains in place; this is not full Hillview parity. See the [comparison report](docs/hillview-parity.md) for the original gap analysis.
+This is not full Hillview parity. Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have not been adopted, and optional PV energy registers are not included. The [comparison report](docs/hillview-parity.md) records the original analysis; feature guides describe the implemented behaviour.
 
 ### Validation
 
 The test workflow covers HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12, alongside HACS and hassfest validation. See the pull request checks for each change. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
-
-
 
 ---
 
@@ -575,9 +556,9 @@ Example Lovelace dashboard configurations are included in the [`examples/`](exam
 
 ---
 
-## Changelog
+## Release history
 
-See [CHANGELOG.md](CHANGELOG.md) for the full version history.
+See the [GitHub release notes](https://github.com/PlainSeer/ha-alphaess-modbus/releases) for changes, fixes, acknowledgements and upgrade instructions. The inherited [CHANGELOG.md](CHANGELOG.md) is retained as historical reference.
 
 ---
 
