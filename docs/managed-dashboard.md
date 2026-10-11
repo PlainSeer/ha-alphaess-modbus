@@ -41,8 +41,21 @@ strategy:
   type: custom:alphaess-modbus
 ```
 
-The integration registers its frontend module automatically. No resource URL or
-separate HACS frontend download is needed. If the strategy is not available,
+The integration registers its frontend module automatically. In storage resource
+mode, it also creates or updates its own versioned Lovelace module resource as a
+second loading path. Both paths use the same URL. It preserves existing resource
+IDs and leaves unrelated resources and dashboard configurations alone. No separate
+HACS frontend download is needed. YAML-managed resources are not modified; those
+installations retain the extra-frontend-module loading path.
+
+This fallback helps when the initial frontend module was missed. HA still starts
+resources asynchronously and has a five-second strategy-registration timeout, so
+it does not guarantee recovery from a slow or failed download. Already-open
+browser sessions need a full refresh after installing the update.
+
+If you uninstall the integration, also remove its `/alphaess_modbus/alphaess-dashboard.js`
+resource from dashboard resources; removing only a dashboard does not require this.
+If the strategy is not available,
 refresh the frontend after restarting HA and check the logs for
 `Could not load optional AlphaESS dashboard module`.
 

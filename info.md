@@ -36,6 +36,7 @@ discovery and no extra custom-card dependencies. Add it once; the layout follows
 integration updates after restart and frontend refresh. Existing dashboards are
 not overwritten, and viewing it does not enable inverter controls.
 Diagnostics uses compact name/value rows in two columns of panels, stacking on phones.
+In storage mode, the integration maintains its own versioned dashboard resource as a second loading path. Refresh the frontend after updates; YAML resources remain user-managed.
 
 [Dashboard setup and replacement guide](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/managed-dashboard.md).
 
