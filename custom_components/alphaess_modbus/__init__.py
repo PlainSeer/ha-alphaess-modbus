@@ -47,10 +47,7 @@ def _detect_model(raw_sn: str) -> str:
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
-    """Register optional frontend assets without changing integration entries."""
-    from .dashboard import async_setup_dashboard
-
-    await async_setup_dashboard(hass)
+    """Set up the integration without registering custom frontend JavaScript."""
     return True
 
 
