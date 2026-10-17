@@ -1,3 +1,5 @@
+> **Beta v1.19.3-beta.1:** This page documents the legacy JavaScript-managed dashboard used in v1.19.2 and earlier. The custom strategy is **not registered** in the native-dashboard beta. Use [native-dashboard.md](native-dashboard.md) and [`examples/native_dashboard.json`](../examples/native_dashboard.json) instead. Keep the standard dashboard and remove the legacy strategy dashboard after the native replacement is verified.
+
 # Optional managed AlphaESS dashboard
 
 The bundled dashboard discovers enabled AlphaESS Modbus entities and groups them
