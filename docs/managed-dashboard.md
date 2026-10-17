@@ -1,108 +1,53 @@
-> **Beta v1.19.3-beta.1:** This page documents the legacy JavaScript-managed dashboard used in v1.19.2 and earlier. The custom strategy is **not registered** in the native-dashboard beta. Use [native-dashboard.md](native-dashboard.md) and [`examples/native_dashboard.json`](../examples/native_dashboard.json) instead. Keep the standard dashboard and remove the legacy strategy dashboard after the native replacement is verified.
+# Default AlphaESS dashboard · v1.19.3b4 beta
 
-# Optional managed AlphaESS dashboard
+The integration includes the dark Overview, Controls and Diagnostics frontend. It is a working frontend, not an image: HA supplies current state and recorder history. The public screenshots use an isolated local fixture with example data.
 
-The bundled dashboard discovers enabled AlphaESS Modbus entities and groups them
-into **Overview**, **Controls** and **Diagnostics**. It uses the integration's
-entity registry identifiers, so entity renaming does not require manual YAML edits.
-Each inverter gets its own views. Hidden and disabled entities are omitted.
+## Install and update
 
-The layout uses 95% of the available view width, with two columns of panels on
-larger screens, stacked panels on phones and short single-line tile labels.
-Long labels retain their full text in the tile's details/accessible description.
-Diagnostics uses the same panels, grouping battery, grid, solar, energy, dispatch,
-inverter/system and fault sensors. Other enabled sensors remain available in a
-fallback group. Each diagnostic sensor uses a compact name/value row, without
-repeated icons. Full names appear on the left and values on the right; long names
-wrap on narrow screens. The two panel columns stack on phones.
-No third-party dashboard cards are required.
+1. In HACS, open AlphaESS Modbus TCP from PlainSeer's fork.
+2. Enable beta versions in the download/version selection and choose **v1.19.3b4**.
+3. Restart Home Assistant, then fully refresh the browser or Companion App frontend.
+4. Open **AlphaESS (Beta)** in the sidebar. It is admin-only by default, as are the existing beta's permissions.
 
-## Examples
+No additional custom card, HACS frontend download, YAML paste or resource copy is required in storage mode. The integration serves three local JavaScript modules with a shared content hash and registers its loader through both the frontend and Lovelace resource APIs. It does not use the temporary inline prototype module.
 
-These screenshots use invented values and the actual bundled card in a local
-preview. They are examples, not readings from a live installation. Panels and
-settings depend on which entities you have enabled.
+## What installation changes
 
-![AlphaESS Overview with example values](images/dashboard-overview.png)
-
-![AlphaESS Controls including optional Peak Shaving, all modes off](images/dashboard-controls.png)
-
-## Add once
-
-After installing a release containing this feature, restart Home Assistant and
-refresh the browser/app frontend.
-
-On HA 2026.5 or newer, go to **Settings → Dashboards → Add dashboard**, choose
-**AlphaESS** under community dashboards, then choose the title/sidebar settings.
-
-Alternatively, create a new empty dashboard, open its raw configuration editor,
-and use the complete contents of [`managed_dashboard.yaml`](../examples/managed_dashboard.yaml):
+- With no dashboard at `dashboard-alphaess-native`, setup creates AlphaESS (Beta) there using HA's Lovelace registration APIs.
+- With this fork's recognised Beta configuration—exactly three panel views named overview, controls and diagnostics, each containing one `custom:alphaess-beta-live` card—setup saves a targeted rollback record, then changes it to the packaged AlphaESS strategy. Metadata and sidebar permissions stay as they were.
+- An existing AlphaESS strategy dashboard automatically uses the new dark design after frontend refresh.
+- Other configurations at that path, YAML dashboards, additional cards/views and unrelated dashboards are left alone. The default personal HA landing page is not changed.
+- A modified Beta configuration is deliberately not auto-migrated. Add a new dashboard using the AlphaESS strategy or review the customisations before replacing it. The exact minimal strategy is shown below.
 
 ```yaml
 strategy:
   type: custom:alphaess-modbus
 ```
 
-The integration registers its frontend module automatically. No resource URL or
-separate HACS frontend download is needed. If the strategy is not available,
-refresh the frontend after restarting HA and check the logs for
-`Could not load optional AlphaESS dashboard module`.
+The targeted prior Beta config is saved by HA's storage helper under `alphaess_modbus.dashboard_migration`; do not hand-edit internal storage files. Retain an exported dashboard config if you want a separately accessible backup.
 
-## Replace a view in an existing dashboard
+## Layout and interaction
 
-Back up that view's YAML first. Replace **only the selected view's configuration**
-with the appropriate example from [`managed_view.yaml`](../examples/managed_view.yaml):
+Overview has two wide desktop columns. Battery/system and solar readings lead into Power Flow, then Energy Today and Battery Health; compact control summaries sit alongside. Diagnostics has its own grouped page, with no repeated right-hand diagnostics column on Overview. Native HA tabs provide navigation; there is no duplicate inner tab row. At 1000 pixels the overview stacks; at 600 pixels the paired panels and control groups stack; diagnostic panels stack below 700 pixels.
 
-```yaml
-title: AlphaESS
-path: alphaess
-strategy:
-  type: custom:alphaess-modbus
-  page: overview
-```
+Rows and tiles are keyboard accessible and open the normal HA details dialog. No custom switch or slider sends commands directly. Opening the page, changing views, refreshing, reading history or clicking a row does not call an inverter service. Changing a setting inside the HA dialog remains a real action using the existing integration. Maintenance dialogs include real restart/reset controls; opening them does not activate them.
 
-Use `page: controls` or `page: diagnostics` for additional views. Do not paste a
-whole-dashboard `strategy:` configuration over a dashboard containing unrelated
-views. With more than one inverter, set `device_id` under the view's strategy to
-the HA device registry ID (the final ID in that device page's URL), not its entity
-ID or IP address. The full managed dashboard discovers all inverters automatically.
+Entity discovery uses platform, config-entry ID, device ID and stable unique IDs. Renamed entities are supported and inverter groups stay separate. Every enabled sensor/binary sensor appears once in Diagnostics, including fault and warning values. Controls retains enabled switches, numbers, selects, time settings and maintenance buttons. Missing or unavailable readings are shown explicitly. An incomplete daily energy estimate is flagged. PV1 and PV2 stay visible at all times; PV3 and PV4 hide while zero, missing or unavailable and return when they report power. This is a display rule, not proof that a string is physically disconnected. Battery status numeric suffixes are removed from the display only. Grid and battery paths animate in the direction implied by signed power; zero or unavailable readings stop the animation.
 
-## Updates and customisation
+The eight-hour solar chart needs recorder history and refreshes at most once every five minutes while HA updates reach the card.
 
-The one-time strategy configuration remains in HA. After integration updates,
-restart HA and refresh the frontend to load the updated layout. No existing
-dashboard is created, overwritten or migrated automatically.
+## Loading and troubleshooting
 
-A managed view follows the bundled design. To customise individual cards freely,
-use the older static YAML examples instead; copied static cards remain yours and
-do not update automatically. Keep your original dashboard until you are happy
-with the replacement. Removing a managed dashboard/view removes only that layout;
-it does not delete the integration, entities, history or inverter settings.
+A refresh is required after updating. The content hash changes for all three modules when any module changes. The previous diagnostic loader is retained; its diagnostics view is a hidden subview at `alphaess-loader-diagnostics`. This beta does **not** claim to resolve the intermittent iOS Companion App loading timeout.
 
-## Data and controls
+If another dashboard occupies the target URL, it is not overwritten. In YAML resource mode, automatic resource registration is skipped, but the frontend extra-module loading path is retained. YAML dashboards remain user-managed. A headless instance skips the frontend entirely.
 
-Overview shows existing sensor states. The daily accumulated house-load value is
-separate from the daily energy-balance estimate, which can decrease. An incomplete
-day is marked when the accumulated sensor reports missing coverage. See
-[energy calculation limits](passive-house-energy.md).
+The old temporary inline prototype resource is no longer referenced by the packaged dashboard. It may remain registered after migration; it does not write settings or compete with inverter controls. This release leaves unrelated resources alone.
 
-Opening the dashboard reads HA's registries and displays existing states. It does
-not poll Modbus separately, alter registers, call services or enable modes. A tile
-opens HA's normal more-info dialog; explicitly changing a setting there uses the
-existing integration control. Maintenance buttons remain in their own labelled
-group. Existing permissions still apply.
+## Rollback
 
-Peak Shaving is shown alongside its existing settings, including its upper
-**Below SoC** threshold and read-only lower cutoff. Adding this dashboard does not
-enable it. Read the [Peak Shaving guide](peak-shaving.md) before using it.
+Select **v1.19.3b3** in HACS, restart HA and refresh the frontend. The saved AlphaESS strategy is compatible with that version and returns to its old dashboard design. The newly created sidebar dashboard can remain; remove it through HA dashboard settings if desired. A native static dashboard must be restored from its exported config if that specific layout is wanted.
 
-## Compatibility and checks
+## Verification and limits
 
-Frontend publishing is tested against HA 2024.12.5 and 2026.10.0. The community
-picker is available from HA 2026.5; older installations can use the YAML strategy.
-Discovery and rendering tests cover renamed entities, multiple inverters,
-disabled/hidden entities, missing data, connection failures and passive tile
-interactions. Local browser checks use example data, not a live inverter.
-
-Home Assistant's [dashboard strategy documentation](https://developers.home-assistant.io/docs/frontend/custom-ui/custom-strategy/)
-describes the underlying dashboard/view configuration.
+Frontend tests cover entity renaming, inverter isolation, passive updates, details-only clicks, missing readings, diagnostic coverage and loader errors. Migration tests cover protected custom dashboards and backup-before-replace behaviour. Regression tests exercise the inherited integration code; they are not a physical inverter certification. Browser QA uses example data at desktop and phone widths, not commands on a connected inverter. No Modbus register, polling, PredBat, charging, discharge/export, Hold/Freeze, Hold for Car, EV charging or Demand/ECO control implementation changes are included.

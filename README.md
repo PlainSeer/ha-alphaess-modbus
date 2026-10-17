@@ -23,18 +23,26 @@ No cloud account required. All communication is direct to the inverter on your l
 
 ## Dashboard preview
 
-**Native dashboard beta (v1.19.3-beta.1):** Overview, Controls and Diagnostics now have a [native-card configuration](examples/native_dashboard.json) that requires **no custom JavaScript**. See the [native dashboard setup and migration guide](docs/native-dashboard.md). The legacy screenshots below depict the previous JavaScript dashboard and are retained only for reference.
+**Beta v1.19.3b4:** the dark dashboard is now the integration's default dashboard design. It includes live readings, an animated power-flow diagram, an eight-hour solar graph, compact control rows and grouped diagnostics. Power Flow sits above Energy Today and Battery Health; diagnostics stay on their own page. Panels stack on phones.
 
-Example values shown; the visible panels depend on your enabled entities.
+These are screenshots of the actual packaged frontend with **example data**, not a design mock-up or readings from your inverter.
 
-![Managed AlphaESS Overview — example values](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-overview.png)
+![Dark AlphaESS Overview — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b4/docs/images/dashboard-overview.png)
 
 <details>
-<summary>See the Controls layout, including Peak Shaving</summary>
+<summary>Controls, Diagnostics and mobile</summary>
 
-![Managed AlphaESS Controls — example values, all modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-controls.png)
+![AlphaESS Controls — example data, modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b4/docs/images/dashboard-controls.png)
+
+![AlphaESS Diagnostics — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b4/docs/images/dashboard-diagnostics.png)
+
+<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b4/docs/images/dashboard-mobile.png" alt="AlphaESS on a 390-pixel phone viewport — example data" width="390">
 
 </details>
+
+Installing this beta through HACS and **restarting HA** packages the frontend and creates **AlphaESS (Beta)** in the sidebar, or migrates this fork's recognised three-view Beta dashboard. Existing managed AlphaESS strategy dashboards also use the dark design. No YAML copy/paste or separate frontend installation is needed. Refresh the frontend after restart. [Installation and migration details](docs/managed-dashboard.md).
+
+This makes it the default **AlphaESS integration dashboard**, without changing your personal Home Assistant landing page or overwriting unrelated dashboards. Viewing it sends no inverter commands; control rows open HA's existing details dialogs.
 
 ## About this fork
 
@@ -546,11 +554,9 @@ If two inverters are configured, the service writes the same value to all instan
 
 ## Dashboards
 
-**Beta v1.19.3-beta.1:** The optional custom JavaScript frontend is no longer registered.
-Use the [native-card dashboard example](examples/native_dashboard.json) for Overview,
-Controls (including Peak Shaving) and Diagnostics, and follow the
-[native setup guide](docs/native-dashboard.md). This static dashboard does not
-auto-discover renamed or newly enabled entities. Existing inverter functions are unchanged.
+The default dashboard in **v1.19.3b4 beta** is the dark design above. Registry-based discovery supports renamed entities and multiple inverters, with distinct routes for each inverter. Every enabled sensor and binary sensor appears once in Diagnostics; enabled controls remain available on Controls. Disabled and hidden registry entries are omitted.
+
+The frontend is included with the integration and is versioned automatically. The [dashboard guide](docs/managed-dashboard.md) explains automatic creation, narrow Beta migration, custom-dashboard protection, troubleshooting and rollback. The previous native example remains available as a manual alternative; it is no longer the default beta design.
 
 ### Static dashboard examples
 

@@ -3,7 +3,8 @@
   "name": "AlphaESS Modbus TCP",
   "after_dependencies": [
     "frontend",
-    "http"
+    "http",
+    "lovelace"
   ],
   "codeowners": [
     "@senalse"
@@ -16,5 +17,5 @@
   "requirements": [
     "pymodbus>=3.7.4"
   ],
-  "version": "1.19.3-beta.1"
+  "version": "1.19.3b4"
 }

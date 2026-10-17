@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
 const dom=new JSDOM('<!doctype html><html><body></body></html>');
 for(const key of ['window','document','HTMLElement','customElements','CustomEvent']) globalThis[key]=dom.window[key];
-const mod=await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard.js');
+const mod=await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard-content.js');
 const {discoverDevices,groupsFor,presentation,AlphaESSDashboardStrategy:Dashboard,AlphaESSViewStrategy:View}=mod;
 const entity=(key,domain='sensor',entry='first',device='one',extra={})=>({entity_id:`${domain}.renamed_${entry}_${key}`,unique_id:`${entry}_${key}`,platform:'alphaess_modbus',config_entry_id:entry,device_id:device,...extra});
 const devices=[{id:'one',name:'Roof'},{id:'two',name_by_user:'Garage'}];
@@ -19,7 +19,7 @@ test('discover renamed entities, isolate entries and ignore unrelated/hidden/dis
 test('dashboard generates distinct routes and performs registry reads only',async()=>{
  const h=hass();const result=await Dashboard.generate({},h);assert.equal(result.views.length,6);assert.equal(new Set(result.views.map(v=>v.path)).size,6);
  assert.deepEqual(h.calls.sort(),['config/device_registry/list','config/entity_registry/list']);
- const view=await View.generate(result.views[0].strategy,h);assert.equal(view.type,'panel');assert.ok(view.cards[0].groups.length);
+ const view=await View.generate(result.views[0].strategy,h);assert.equal(view.type,'panel');assert.ok(Object.keys(view.cards[0].bindings).length);
 });
 test('ambiguous device, empty registry and registry failure are actionable',async()=>{
  assert.match(JSON.stringify(await View.generate({},hass())),/Select one/);
@@ -33,7 +33,14 @@ test('controls include peak and remaining controls once; omit disabled controls'
 });
 test('format missing states, negative battery direction and grid export',()=>{
  for(const state of [undefined,{state:null},{state:'unknown'},{state:'unavailable'}])assert.equal(presentation(state,{}).value,'Unavailable');
- assert.equal(presentation({state:'-1450',attributes:{unit_of_measurement:'W'}},{color:'battery'}).value,'-1,450');
+ assert.equal(presentation({state:'-1450',attributes:{unit_of_measurement:'W'}},{color:'battery'}).value,'Charging 1,450');
+ assert.equal(presentation({state:'1450',attributes:{unit_of_measurement:'W'}},{color:'battery'}).value,'Discharging 1,450');
+ assert.deepEqual(presentation({state:'0',attributes:{unit_of_measurement:'W'}},{color:'battery'}),{value:'Idle',unit:'',color:'#9e9e9e'});
+ assert.equal(presentation({state:'-1.45',attributes:{unit_of_measurement:'kW'}},{color:'battery'}).value,'Charging 1.45');
+ const unavailable=presentation({state:'unavailable'},{color:'battery'});
+ assert.equal(unavailable.value,'Unavailable');
+ const device=discoverDevices([entity('power_battery')],devices,'one')[0];
+ assert.equal(mod.diagnosticGroups(device).flatMap(g=>g.items)[0].color,'battery');
  assert.equal(presentation({state:'-500',attributes:{unit_of_measurement:'W'}},{color:'grid'}).value,'Export 500');
  assert.equal(presentation({state:'off'},{domain:'switch'}).value,'Off');
 });
@@ -55,7 +62,7 @@ test('incomplete energy day is visible without hover; no stale state after unava
  h.states={};card.hass=h;assert.equal(card.shadowRoot.querySelector('.status').hidden,true);assert.match(card.shadowRoot.textContent,/Unavailable/);
 });
 test('module reload does not double-register custom elements or picker entries',async()=>{
- await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard.js?reload=1');
+ await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard-content.js?reload=1');
  assert.equal(window.customStrategies.filter(s=>s.type==='alphaess-modbus').length,1);
 });
 
@@ -63,11 +70,11 @@ test('diagnostics uses shared panels and retains every enabled sensor exactly on
  const list=[entity('battery_voltage'),entity('battery_fault'),entity('inverter_grid_frequency'),entity('pv1_voltage'),entity('total_energy_from_pv'),entity('dispatch_mode'),entity('inverter_temperature'),entity('future_metric'),entity('battery_full_soc','binary_sensor'),entity('peak_shaving','switch'),entity('hidden','sensor','first','one',{hidden_by:'user'}),entity('disabled','sensor','first','one',{disabled_by:'integration'})];
  const view=await View.generate({page:'diagnostics',device_id:'one'},hass(list));
  assert.equal(view.type,'panel');assert.equal(view.title,'Diagnostics');
- const card=view.cards[0];assert.equal(card.type,'custom:alphaess-summary');assert.equal(card.page,'diagnostics');
- const shown=card.groups.flatMap(g=>g.items.map(i=>i.entity));
+ const card=view.cards[0];assert.equal(card.type,'custom:alphaess-dark-dashboard');assert.equal(card.view,'diagnostics');
+ const shown=card.diagnostics.flatMap(g=>g.entities.map(i=>i.entity));
  const expected=list.filter(e=>!e.hidden_by&&!e.disabled_by&&!e.entity_id.startsWith('switch.')).map(e=>e.entity_id);
  assert.deepEqual(shown.sort(),expected.sort());assert.equal(new Set(shown).size,shown.length);
- assert.deepEqual(new Set(card.groups.map(g=>g.title)),new Set(['Battery','Faults & warnings','Grid','Solar','Energy','Dispatch & operating status','Inverter & system','Other sensors']));
+ assert.deepEqual(new Set(card.diagnostics.map(g=>g.name)),new Set(['Battery','Faults & warnings','Grid','Solar','Energy','Dispatch & operating status','Inverter & system','Other sensors']));
 });
 
 test('diagnostic labels preserve full names and open only more-info',()=>{
