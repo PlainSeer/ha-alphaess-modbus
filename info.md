@@ -33,7 +33,7 @@ Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have
 
 **Beta v1.19.3b4:** the dark dashboard is now the integration's default dashboard design. It includes live readings, an animated power-flow diagram, an eight-hour solar graph, compact control rows and grouped diagnostics. Power Flow sits above Energy Today and Battery Health; diagnostics stay on their own page. Panels stack on phones.
 
-These are screenshots of the actual packaged frontend with **example data**, not a design mock-up or readings from your inverter.
+Screenshots show example data.
 
 ![Dark AlphaESS Overview — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b4/docs/images/dashboard-overview.png)
 
