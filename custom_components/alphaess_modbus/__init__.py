@@ -47,7 +47,16 @@ def _detect_model(raw_sn: str) -> str:
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
-    """Set up the integration without registering custom frontend JavaScript."""
+    """Register optional frontend assets without changing integration entries."""
+    from .dashboard import async_setup_dashboard
+
+    await async_setup_dashboard(hass)
+    try:
+        from .dashboard_install import async_install_dashboard
+        await async_install_dashboard(hass)
+    except Exception:
+        import logging
+        logging.getLogger(__name__).exception("Could not install optional AlphaESS dashboard")
     return True
 
 

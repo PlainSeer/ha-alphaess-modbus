@@ -1,11 +1,11 @@
 // Local documentation fixture. Never connects to Home Assistant or an inverter.
-import {OVERVIEW,CONTROLS,discoverDevices,groupsFor} from '../../custom_components/alphaess_modbus/frontend/alphaess-dashboard.js';
+import {OVERVIEW,CONTROLS,discoverDevices,groupsFor,darkCardConfig} from '../../custom_components/alphaess_modbus/frontend/alphaess-dashboard-content.js';
 // HA supplies ha-icon in production; use the same public MDI font in this fixture.
 class PreviewIcon extends HTMLElement {
  connectedCallback(){const span=document.createElement('span');span.className=this.getAttribute('icon').replace('mdi:','mdi mdi-');span.style.fontSize='26px';span.setAttribute('aria-hidden','true');this.replaceChildren(span);}
 }
 customElements.define('ha-icon',PreviewIcon);
-const values={soc_battery:[68,'%'],power_battery:[-1400,'W'],current_house_load:[1800,'W'],current_pv_production:[3200,'W'],power_grid:[0,'W'],battery_full_soc:['off',''],inverter_work_mode:['Normal',''],soh_battery:[100,'%'],battery_max_cell_temp:[25,'°C'],house_load_energy_today:[8.42,'kWh'],today_pv_generation:[12.8,'kWh'],today_energy_from_grid:[3.1,'kWh'],today_energy_feed_to_grid:[2.4,'kWh'],today_battery_charged:[6.3,'kWh'],today_battery_discharged:[1.2,'kWh'],pv1_power:[1700,'W'],pv2_power:[1500,'W'],inverter_temperature:[36,'°C'],battery_voltage:[53.2,'V'],battery_current:[26.3,'A'],battery_min_cell_temp:[23,'°C'],current_house_load_filtered:[1760,'W'],current_pv_production_filtered:[3180,'W'],excess_power:[1420,'W'],house_energy_today:[8.37,'kWh'],house_energy_since_tracking:[124.6,'kWh']};
+const values={battery_status:["Charging (2)",""],pv3_power:[0,"W"],pv4_power:[0,"W"],battery_min_cell_voltage:[3.40,"V"],battery_max_cell_voltage:[3.42,"V"],soc_battery:[68,'%'],power_battery:[-1400,'W'],current_house_load:[1800,'W'],current_pv_production:[4100,'W'],power_grid:[-900,'W'],battery_full_soc:['off',''],inverter_work_mode:['Normal',''],soh_battery:[100,'%'],battery_max_cell_temp:[25,'°C'],house_load_energy_today:[8.42,'kWh'],today_pv_generation:[12.8,'kWh'],today_energy_from_grid:[3.1,'kWh'],today_energy_feed_to_grid:[2.4,'kWh'],today_battery_charged:[6.3,'kWh'],today_battery_discharged:[1.2,'kWh'],pv1_power:[1700,'W'],pv2_power:[2400,'W'],inverter_temperature:[36,'°C'],battery_voltage:[53.2,'V'],battery_current:[26.3,'A'],battery_min_cell_temp:[23,'°C'],current_house_load_filtered:[1760,'W'],current_pv_production_filtered:[3180,'W'],excess_power:[1420,'W'],house_energy_today:[8.37,'kWh'],house_energy_since_tracking:[124.6,'kWh']};
 const entities=[],states={},seen=new Set();
 for(const group of [...OVERVIEW,...CONTROLS])for(const item of group.items){
  const id=`${item.domain}.example_${item.key}`;if(seen.has(id))continue;
@@ -36,10 +36,9 @@ entities.find(e=>e.unique_id==='example_battery_max_cell_temp').original_name='B
 entities.find(e=>e.unique_id==='example_house_load_energy_today').original_name='House Load Energy Today Accumulated';
 states['sensor.example_house_load_energy_today'].attributes.incomplete_day=true;
 const device=discoverDevices(entities,[{id:'example-device',name:'AlphaESS inverter'}])[0];
-const card=document.querySelector('alphaess-summary');
-const fontStyle='/node_modules/@mdi/font/css/materialdesignicons.min.css';
-const headFont=document.createElement('link');headFont.rel='stylesheet';headFont.href=fontStyle;document.head.append(headFont);
-function show(page){card.setConfig({title:'AlphaESS inverter',page,groups:groupsFor(device,page)});card.hass={states,locale:{language:'en'}};const link=document.createElement('link');link.rel='stylesheet';link.href=fontStyle;card.shadowRoot.append(link);for(const b of document.querySelectorAll('nav button'))b.setAttribute('aria-selected',String(b.id===page));}
+let card;
+
+function show(page){card=document.createElement('alphaess-dark-dashboard');card.setConfig(darkCardConfig(device,page));document.querySelector('main').replaceChildren(card);card.hass={states,connected:true,locale:{language:'en'},callApi:async()=>[[...Array.from({length:80},(_,i)=>({state:String(100+Math.sin(i/18)*3100+i*4),last_changed:new Date(Date.now()-(79-i)*360000).toISOString()}))]]};for(const b of document.querySelectorAll('nav button'))b.setAttribute('aria-selected',String(b.id===page));}
 for(const b of document.querySelectorAll('nav button'))b.onclick=()=>show(b.id);
 show('overview');
-window.preview={show,card,states};
+window.preview={show,get card(){return card},states};
