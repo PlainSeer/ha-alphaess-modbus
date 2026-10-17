@@ -23,8 +23,7 @@ No cloud account required. All communication is direct to the inverter on your l
 
 ## Dashboard preview
 
-The optional dashboard includes **Overview**, **Controls** and **Diagnostics**, with no extra custom-card downloads. [See setup instructions](docs/managed-dashboard.md).
-Diagnostics uses compact name/value rows in two columns of panels, stacking on phones.
+**Native dashboard beta (v1.19.3-beta.1):** Overview, Controls and Diagnostics now have a [native-card configuration](examples/native_dashboard.json) that requires **no custom JavaScript**. See the [native dashboard setup and migration guide](docs/native-dashboard.md). The legacy screenshots below depict the previous JavaScript dashboard and are retained only for reference.
 
 Example values shown; the visible panels depend on your enabled entities.
 
@@ -547,13 +546,15 @@ If two inverters are configured, the service writes the same value to all instan
 
 ## Dashboards
 
-The **optional managed dashboard** provides Overview, Controls (including Peak
-Shaving) and Diagnostics, with automatic discovery of your integration entities.
-Add it once; its layout follows future integration updates after restart and a
-frontend refresh. It does not overwrite existing dashboards or enable controls.
-No third-party cards are required. See the [setup and replacement guide](docs/managed-dashboard.md).
+**Beta v1.19.3-beta.1:** The optional custom JavaScript frontend is no longer registered.
+Use the [native-card dashboard example](examples/native_dashboard.json) for Overview,
+Controls (including Peak Shaving) and Diagnostics, and follow the
+[native setup guide](docs/native-dashboard.md). This static dashboard does not
+auto-discover renamed or newly enabled entities. Existing inverter functions are unchanged.
 
 ### Static dashboard examples
+
+The beta native dashboard is also available at [`examples/native_dashboard.json`](examples/native_dashboard.json).
 
 Example Lovelace dashboard configurations are included in the [`examples/`](examples/) folder:
 
