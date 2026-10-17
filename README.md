@@ -23,6 +23,30 @@ No cloud account required. All communication is direct to the inverter on your l
 
 ## Dashboard preview
 
+**Beta v1.19.3b4:** the dark dashboard is now the integration's default dashboard design. It includes live readings, an animated power-flow diagram, an eight-hour solar graph, compact control rows and grouped diagnostics. Power Flow sits above Energy Today and Battery Health; diagnostics stay on their own page. Panels stack on phones.
+
+These are screenshots of the actual packaged frontend with **example data**, not a design mock-up or readings from your inverter.
+
+![Dark AlphaESS Overview — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b4/docs/images/dashboard-overview.png)
+
+<details>
+<summary>Controls, Diagnostics and mobile</summary>
+
+![AlphaESS Controls — example data, modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b4/docs/images/dashboard-controls.png)
+
+![AlphaESS Diagnostics — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b4/docs/images/dashboard-diagnostics.png)
+
+<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b4/docs/images/dashboard-mobile.png" alt="AlphaESS on a 390-pixel phone viewport — example data" width="390">
+
+</details>
+
+Installing this beta through HACS and **restarting HA** packages the frontend and creates **AlphaESS (Beta)** in the sidebar, or migrates this fork's recognised three-view Beta dashboard. Existing managed AlphaESS strategy dashboards also use the dark design. No YAML copy/paste or separate frontend installation is needed. Refresh the frontend after restart. [Installation and migration details](https://github.com/PlainSeer/ha-alphaess-modbus/blob/v1.19.3b4/docs/managed-dashboard.md).
+
+This makes it the default **AlphaESS integration dashboard**, without changing your personal Home Assistant landing page or overwriting unrelated dashboards. Viewing it sends no inverter commands; control rows open HA's existing details dialogs.
+
+<details>
+<summary>Stable v1.19.2 dashboard reference</summary>
+
 The optional dashboard includes **Overview**, **Controls** and **Diagnostics**, with no extra custom-card downloads. [See setup instructions](docs/managed-dashboard.md).
 Diagnostics uses compact name/value rows in two columns of panels, stacking on phones.
 
@@ -34,6 +58,8 @@ Example values shown; the visible panels depend on your enabled entities.
 <summary>See the Controls layout, including Peak Shaving</summary>
 
 ![Managed AlphaESS Controls — example values, all modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-controls.png)
+
+</details>
 
 </details>
 
