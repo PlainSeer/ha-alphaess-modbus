@@ -41,9 +41,10 @@ def test_frontend_failure_does_not_block_integration():
     add.assert_not_called()
 
 
-def test_setup_hook_delegates_only_to_frontend():
+def test_setup_hook_does_not_register_frontend():
     from custom_components.alphaess_modbus import async_setup
     with patch.object(dashboard, 'async_setup_dashboard', new_callable=AsyncMock) as setup:
         h = fake()
         assert asyncio.run(async_setup(h, {}))
-        setup.assert_awaited_once_with(h)
+        setup.assert_not_awaited()
+        h.http.async_register_static_paths.assert_not_called()
