@@ -386,6 +386,65 @@
             {
               "type": "markdown",
               "content": "**Maintenance:** use the standard dashboard for inverter restarts, resets and time synchronisation. These are intentionally not one-tap actions here."
+            },
+            {
+              "type": "markdown",
+              "content": "### Maintenance\nOpen a button's details before running a reset, restart or synchronisation."
+            },
+            {
+              "type": "grid",
+              "columns": 2,
+              "square": false,
+              "cards": [
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_dispatch_reset",
+                  "name": "dispatch reset",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_sync_dispatch_state",
+                  "name": "sync dispatch state",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_synchronise_date_time",
+                  "name": "synchronise date time",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_restart_ems",
+                  "name": "restart ems",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_restart_pcs",
+                  "name": "restart pcs",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_reset_energy_totals",
+                  "name": "reset energy totals",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                }
+              ]
             }
           ],
           "column_span": 1
