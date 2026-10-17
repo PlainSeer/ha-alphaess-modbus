@@ -29,11 +29,13 @@ These passive sensors use data already read by the integration, without adding r
 
 Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have not been adopted, and optional PV energy registers are not included.
 
-## Default dashboard · v1.19.3b5 beta
+## Default dashboard · v1.19.3b6 beta
 
-**Beta v1.19.3b5:** the dark dashboard is now the integration's default dashboard design. It includes live readings, an animated power-flow diagram, an eight-hour solar graph, compact control rows and grouped diagnostics. Power Flow sits above Energy Today and Battery Health; diagnostics stay on their own page. Panels stack on phones.
+**Beta v1.19.3b6:** the dark dashboard is now the integration's default dashboard design. It includes live readings, an animated power-flow diagram, an eight-hour solar graph, compact control rows and grouped diagnostics. Power Flow sits above Energy Today and Battery Health; diagnostics stay on their own page. Panels stack on phones.
 
-Screenshots show example data.
+The power-flow diagram uses a balanced, centred layout, a grid pylon, smaller power units and direction arrows beside unsigned readings. Other readings retain their existing formatting.
+
+Screenshots show example data from the preceding beta; v1.19.3b6 updates the Power Flow panel as described above.
 
 ![Dark AlphaESS Overview — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-overview.png)
 
@@ -48,7 +50,7 @@ Screenshots show example data.
 
 </details>
 
-Installing this beta through HACS and **restarting HA** packages the frontend and creates **AlphaESS (Beta)** in the sidebar, or migrates this fork's recognised three-view Beta dashboard. Existing managed AlphaESS strategy dashboards also use the dark design. No YAML copy/paste or separate frontend installation is needed. Refresh the frontend after restart. [Installation and migration details](https://github.com/PlainSeer/ha-alphaess-modbus/blob/v1.19.3b5/docs/managed-dashboard.md).
+Installing this beta through HACS and **restarting HA** packages the frontend and creates **AlphaESS (Beta)** in the sidebar, or migrates this fork's recognised three-view Beta dashboard. Existing managed AlphaESS strategy dashboards also use the dark design. No YAML copy/paste or separate frontend installation is needed. Refresh the frontend after restart. [Installation and migration details](https://github.com/PlainSeer/ha-alphaess-modbus/blob/v1.19.3b6/docs/managed-dashboard.md).
 
 This makes it the default **AlphaESS integration dashboard**, without changing your personal Home Assistant landing page or overwriting unrelated dashboards. Viewing it sends no inverter commands; control rows open HA's existing details dialogs.
 

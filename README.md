@@ -23,9 +23,11 @@ No cloud account required. All communication is direct to the inverter on your l
 
 ## Dashboard preview
 
-**Beta v1.19.3b5:** the dark dashboard is now the integration's default dashboard design. It includes live readings, an animated power-flow diagram, an eight-hour solar graph, compact control rows and grouped diagnostics. Power Flow sits above Energy Today and Battery Health; diagnostics stay on their own page. Panels stack on phones.
+**Beta v1.19.3b6:** the dark dashboard is now the integration's default dashboard design. It includes live readings, an animated power-flow diagram, an eight-hour solar graph, compact control rows and grouped diagnostics. Power Flow sits above Energy Today and Battery Health; diagnostics stay on their own page. Panels stack on phones.
 
-Screenshots show example data.
+The power-flow diagram uses a balanced, centred layout, a grid pylon, smaller power units and direction arrows beside unsigned readings. Other readings retain their existing formatting.
+
+Screenshots show example data from the preceding beta; v1.19.3b6 updates the Power Flow panel as described above.
 
 ![Dark AlphaESS Overview — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-overview.png)
 
@@ -554,7 +556,7 @@ If two inverters are configured, the service writes the same value to all instan
 
 ## Dashboards
 
-The default dashboard in **v1.19.3b5 beta** is the dark design above. Registry-based discovery supports renamed entities and multiple inverters, with distinct routes for each inverter. Every enabled sensor and binary sensor appears once in Diagnostics; enabled controls remain available on Controls. Disabled and hidden registry entries are omitted.
+The default dashboard in **v1.19.3b6 beta** is the dark design above. Registry-based discovery supports renamed entities and multiple inverters, with distinct routes for each inverter. Every enabled sensor and binary sensor appears once in Diagnostics; enabled controls remain available on Controls. Disabled and hidden registry entries are omitted.
 
 The frontend is included with the integration and is versioned automatically. The [dashboard guide](docs/managed-dashboard.md) explains automatic creation, narrow Beta migration, custom-dashboard protection, troubleshooting and rollback. The previous native example remains available as a manual alternative; it is no longer the default beta design.
 
