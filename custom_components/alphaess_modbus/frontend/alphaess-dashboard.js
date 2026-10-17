@@ -1,5 +1,5 @@
 /** Diagnostic beta loader. No service calls, storage writes or telemetry. */
-const VERSION = "1.19.3b4";
+const VERSION = "1.19.3b5";
 const TYPE = "alphaess-modbus";
 const moduleUrl = new URL("./alphaess-dashboard-content.js", import.meta.url);
 moduleUrl.search = new URL(import.meta.url).search;
