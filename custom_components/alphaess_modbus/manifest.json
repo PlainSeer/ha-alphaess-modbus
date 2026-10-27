@@ -7,7 +7,7 @@
     "lovelace"
   ],
   "codeowners": [
-    "@senalse"
+    "@PlainSeer"
   ],
   "config_flow": true,
   "documentation": "https://github.com/PlainSeer/ha-alphaess-modbus",
@@ -17,5 +17,5 @@
   "requirements": [
     "pymodbus>=3.7.4"
   ],
-  "version": "1.20.0"
+  "version": "1.20.1"
 }

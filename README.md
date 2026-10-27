@@ -4,6 +4,7 @@
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/release/PlainSeer/ha-alphaess-modbus.svg)](https://github.com/PlainSeer/ha-alphaess-modbus/releases)
+[![Release downloads](https://img.shields.io/github/downloads/PlainSeer/ha-alphaess-modbus/total?label=release%20downloads)](https://github.com/PlainSeer/ha-alphaess-modbus/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Local Home Assistant integration for **AlphaESS solar inverters** (SMILE-M5, SMILE5, SMILE-G3, SMILE-Hi, SMILE-B3 series) via **Modbus TCP**.
@@ -23,7 +24,7 @@ No cloud account required. All communication is direct to the inverter on your l
 
 ## Dashboard preview
 
-**v1.20.0** provides three saved Home Assistant views: **Main**, **Readings** and **Diagnostics**. It does not use a custom dashboard or view strategy. Native panels stack on phones.
+**v1.20.1** provides three saved Home Assistant views: **Main**, **Readings** and **Diagnostics**. It does not use a custom dashboard or view strategy. Native panels stack on phones.
 
 **Main** keeps the four-node flow and its battery charge, health, temperature and work-mode readings together. Force charging/discharging, export/import, Peak Shaving, operating settings, schedules and maintenance are on the same page. **Readings** contains daily energy, solar strings, battery details, filtered power and house-energy estimates. Diagnostics remains separate.
 
@@ -42,11 +43,13 @@ No cloud account required. All communication is direct to the inverter on your l
 
 Images use the production flow card and representative native panels with example readings; they are not screenshots of a connected inverter. Native card appearance follows your HA version and theme.
 
-Update to **v1.20.0** through HACS, restart HA and refresh the frontend. A fresh installation creates **AlphaESS**. An existing recognised **AlphaESS (Beta)** dashboard is updated in place, keeping its current name, permissions and URL. No duplicate is created. Customised, YAML and unrelated dashboards are preserved. [Setup, migration and rollback](docs/saved-dashboard.md).
+Update to **v1.20.1** through HACS, restart HA and refresh the frontend. A fresh installation creates **AlphaESS**. An existing recognised **AlphaESS (Beta)** dashboard is updated in place, keeping its current name, permissions and URL. No duplicate is created. Customised, YAML and unrelated dashboards are preserved. [Setup, migration and rollback](docs/saved-dashboard.md).
 
 HACS displays the README from the installed version. An older installation can therefore show older previews until updated; refreshing HACS alone does not change the installed version.
 
 ## About this fork
+
+Maintained by [PlainSeer](https://github.com/PlainSeer).
 
 **PlainSeer/ha-alphaess-modbus** continues from [Senalse's integration](https://github.com/senalse/ha-alphaess-modbus) at v1.14.0. The original Python integration is Senalse's work, based on [Axel Koegler's Hillview AlphaESS YAML package](https://projects.hillviewlodge.ie/alphaess/).
 
@@ -588,6 +591,8 @@ Example Lovelace dashboard configurations are included in the [`examples/`](exam
 ---
 
 ## Release history
+
+The download badge counts packaged release downloads from v1.20.1 onward, including updates and repeat downloads. It is not a count of unique installations, and earlier source-archive downloads are not included.
 
 See the [GitHub release notes](https://github.com/PlainSeer/ha-alphaess-modbus/releases) for changes, fixes, acknowledgements and upgrade instructions. The inherited [CHANGELOG.md](CHANGELOG.md) is retained as historical reference.
 
