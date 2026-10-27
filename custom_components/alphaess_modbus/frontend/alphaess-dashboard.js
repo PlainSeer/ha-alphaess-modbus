@@ -3,6 +3,10 @@ const VERSION = "1.19.3b5";
 const TYPE = "alphaess-modbus";
 const moduleUrl = new URL("./alphaess-dashboard-content.js", import.meta.url);
 moduleUrl.search = new URL(import.meta.url).search;
+// Saved views need only the flow card. Load it independently of legacy strategies.
+const flowUrl = new URL("./alphaess-power-flow.js", import.meta.url);
+flowUrl.search = new URL(import.meta.url).search;
+void import(flowUrl.href).catch(error => console.warn("AlphaESS flow card unavailable", error));
 
 // Export the loader factory so failures can be tested without a real HA server.
 export function createLoader(importModule, timeoutMs = 8000) {

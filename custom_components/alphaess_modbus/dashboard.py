@@ -16,11 +16,13 @@ CONTENT_PATH = MODULE_PATH.with_name("alphaess-dashboard-content.js")
 CONTENT_URL = "/alphaess_modbus/alphaess-dashboard-content.js"
 DARK_PATH = MODULE_PATH.with_name("alphaess-dark-dashboard.js")
 DARK_URL = "/alphaess_modbus/alphaess-dark-dashboard.js"
+FLOW_PATH = MODULE_PATH.with_name("alphaess-power-flow.js")
+FLOW_URL = "/alphaess_modbus/alphaess-power-flow.js"
 
 
 def _dashboard_digest() -> str:
     """Invalidate all frontend modules when any one changes."""
-    return sha256(MODULE_PATH.read_bytes() + CONTENT_PATH.read_bytes() + DARK_PATH.read_bytes()).hexdigest()[:16]
+    return sha256(MODULE_PATH.read_bytes() + CONTENT_PATH.read_bytes() + DARK_PATH.read_bytes() + FLOW_PATH.read_bytes()).hexdigest()[:16]
 
 
 async def async_register_dashboard_resource(hass: HomeAssistant, url: str) -> None:
@@ -62,6 +64,7 @@ async def async_setup_dashboard(hass: HomeAssistant) -> None:
             StaticPathConfig(MODULE_URL, str(MODULE_PATH), cache_headers=False),
             StaticPathConfig(CONTENT_URL, str(CONTENT_PATH), cache_headers=False),
             StaticPathConfig(DARK_URL, str(DARK_PATH), cache_headers=False),
+            StaticPathConfig(FLOW_URL, str(FLOW_PATH), cache_headers=False),
         ])
         url = f"{MODULE_URL}?v={digest}"
         add_extra_js_url(hass, url)

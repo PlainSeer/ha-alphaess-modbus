@@ -33,7 +33,7 @@ def test_module_registration_and_content_hash():
     content_path = h.http.async_register_static_paths.call_args.args[0][1]
     assert content_path.url_path == dashboard.CONTENT_URL
     assert not content_path.cache_headers
-    digest = sha256(dashboard.MODULE_PATH.read_bytes() + dashboard.CONTENT_PATH.read_bytes() + dashboard.DARK_PATH.read_bytes()).hexdigest()[:16]
+    digest = sha256(dashboard.MODULE_PATH.read_bytes() + dashboard.CONTENT_PATH.read_bytes() + dashboard.DARK_PATH.read_bytes() + dashboard.FLOW_PATH.read_bytes()).hexdigest()[:16]
     add.assert_called_once_with(h, f'{dashboard.MODULE_URL}?v={digest}')
 
 

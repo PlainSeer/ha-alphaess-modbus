@@ -1,4 +1,29 @@
-# Hillview comparison — 29 September 2026
+# Hillview comparison — reviewed 27 October 2026
+
+## Current reference: v11.5
+
+The full Hillview YAML was retrieved on 27 October 2026 from
+`https://projects.hillviewlodge.ie/_alphaess/integration_alpha_ess.yaml`.
+SHA256: `b82fdf2582c1328d9550175ed6adb565d85aa054690e0e2ef0c1529e91b686ed`.
+The `.txt` URL currently supplies the changelog rather than the full package.
+
+Changes after the previous v11.3 comparison:
+
+| Reference change | Source behaviour | Treatment |
+| --- | --- | --- |
+| 11.4, 19 October: Excess Export inverter AC limit offset | Adds a 0–2000 W helper, step 100 W. The dispatch threshold subtracts the offset from the AC limit; the charging calculation adds it. This directly alters the dispatch active-power word written at 0x0880. | Reviewed, not adopted. Existing Excess Export calculation and command path are preserved. |
+| 11.5, 20 October: filtered value defaults | Current filter blocks still use window 1 and time constant 5. Template consumers now supply numeric fallbacks such as `int(0)` and `float(0)`. | No filter coefficient change is needed. Python filters already reject invalid inputs, reset, and initialise on the next valid source value. Preserving unavailable-state handling is intentional; invalid data is not silently treated as zero. |
+
+This review adds no registers, polling changes or dispatch features. The native
+saved dashboard and the daily accumulator's event-loop callback fix are separate
+HA-side maintenance changes. Source comparisons confirm that coordinator,
+register maps, Modbus client, controls, raw calculations and energy accounting
+remain identical to v1.19.3b6, apart from the accumulator callback annotation.
+
+The Force Import/Export servo, Hold monitoring and raw house-load semantics below
+remain intentional differences. A matching changelog entry is not full parity.
+
+## Original comparison — 29 September 2026
 
 ## Evidence and boundaries
 

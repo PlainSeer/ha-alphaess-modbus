@@ -52,8 +52,8 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
     await async_setup_dashboard(hass)
     try:
-        from .dashboard_install import async_install_dashboard
-        await async_install_dashboard(hass)
+        from .dashboard_install import async_watch_dashboard
+        async_watch_dashboard(hass)
     except Exception:
         import logging
         logging.getLogger(__name__).exception("Could not install optional AlphaESS dashboard")
@@ -114,6 +114,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    try:
+        from .dashboard_install import async_install_dashboard
+        await async_install_dashboard(hass)
+    except Exception:
+        import logging
+        logging.getLogger(__name__).exception("Could not install optional saved AlphaESS dashboard")
     entry.async_on_unload(entry.add_update_listener(_async_update_options))
     return True
 

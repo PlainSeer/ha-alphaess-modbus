@@ -3,6 +3,7 @@ from datetime import date
 import time
 
 from homeassistant.components.sensor import RestoreSensor, SensorDeviceClass, SensorStateClass
+from homeassistant.core import callback
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_time_change
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -111,6 +112,7 @@ class AlphaESSHouseLoadDailySensor(CoordinatorEntity, RestoreSensor):
         self._sample()
         super()._handle_coordinator_update()
 
+    @callback
     def _midnight(self, now):
         self._sample(dt_util.as_utc(now))
         self.async_write_ha_state()
