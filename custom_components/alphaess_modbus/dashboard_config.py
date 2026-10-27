@@ -137,4 +137,7 @@ def dashboard_from_registry(hass):
     """Read the registries only; never reads or writes inverter registers."""
     entities = [e for e in er.async_get(hass).entities.values()
                 if not ((state := hass.states.get(e.entity_id)) and state.attributes.get("restored"))]
-    return build_dashboard(entities, dr.async_get(hass).devices)
+    registry = dr.async_get(hass)
+    devices = {device_id: registry.async_get(device_id)
+               for device_id in {e.device_id for e in entities if e.device_id and e.platform == DOMAIN}}
+    return build_dashboard(entities, devices)
