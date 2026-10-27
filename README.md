@@ -23,26 +23,28 @@ No cloud account required. All communication is direct to the inverter on your l
 
 ## Dashboard preview
 
-**v1.20.0b1:** a saved Home Assistant dashboard with **Overview**, **Controls** and **Diagnostics**. Two-column panels stack on phones. Dashboard and view strategies are no longer used by the default dashboard.
+**v1.20.0** provides three saved Home Assistant views: **Main**, **Readings** and **Diagnostics**. It does not use a custom dashboard or view strategy. Native panels stack on phones.
 
-Overview keeps the inverter centred between Solar/Grid and Battery/Load. The four-node flow uses solid tracks and smooth power-dependent dots, a grid pylon, compact units and direction labels. Tapping a value opens its entity details. Native panels show daily energy, solar strings, battery details and estimates.
+**Main** keeps the four-node flow and its battery charge, health, temperature and work-mode readings together. Force charging/discharging, export/import, Peak Shaving, operating settings, schedules and maintenance are on the same page. **Readings** contains daily energy, solar strings, battery details, filtered power and house-energy estimates. Diagnostics remains separate.
 
-![AlphaESS saved Overview — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/d60f174ac61c223c8e3406b492f4e60d8d88f211/docs/images/dashboard-overview.png)
+![AlphaESS Main — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/cbf2b9229f95cfb16cfa224b13fe6c2c447e49ae/docs/images/dashboard-main.png)
 
 <details>
-<summary>Controls, Diagnostics and mobile previews</summary>
+<summary>Readings, Diagnostics and phone previews</summary>
 
-![AlphaESS Controls — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/d60f174ac61c223c8e3406b492f4e60d8d88f211/docs/images/dashboard-controls.png)
+![AlphaESS Readings — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/cbf2b9229f95cfb16cfa224b13fe6c2c447e49ae/docs/images/dashboard-readings.png)
 
-![AlphaESS Diagnostics — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/d60f174ac61c223c8e3406b492f4e60d8d88f211/docs/images/dashboard-diagnostics.png)
+![AlphaESS Diagnostics — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/cbf2b9229f95cfb16cfa224b13fe6c2c447e49ae/docs/images/dashboard-diagnostics.png)
 
-<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/d60f174ac61c223c8e3406b492f4e60d8d88f211/docs/images/dashboard-mobile.png" alt="Saved AlphaESS dashboard at 390 pixels — local preview with example data" width="390">
+<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/cbf2b9229f95cfb16cfa224b13fe6c2c447e49ae/docs/images/dashboard-mobile.png" alt="AlphaESS Main on a 390-pixel phone viewport — local preview with example data" width="390">
 
 </details>
 
-Images use a local preview of the production flow card and representative native panels with example readings; they are not screenshots of a connected inverter. Native card appearance follows your HA version and theme.
+Images use the production flow card and representative native panels with example readings; they are not screenshots of a connected inverter. Native card appearance follows your HA version and theme.
 
-Update through HACS, restart HA and refresh the frontend. Setup creates **AlphaESS**, or backs up and migrates this fork's exact default strategy/recognised beta dashboard at its existing URL. Customised dashboards, YAML dashboards and unrelated dashboards are preserved. [Setup, migration and rollback](docs/managed-dashboard.md).
+Update to **v1.20.0** through HACS, restart HA and refresh the frontend. A fresh installation creates **AlphaESS**. An existing recognised **AlphaESS (Beta)** dashboard is updated in place, keeping its current name, permissions and URL. No duplicate is created. Customised, YAML and unrelated dashboards are preserved. [Setup, migration and rollback](docs/saved-dashboard.md).
+
+HACS displays the README from the installed version. An older installation can therefore show older previews until updated; refreshing HACS alone does not change the installed version.
 
 ## About this fork
 
@@ -554,7 +556,7 @@ If two inverters are configured, the service writes the same value to all instan
 
 ## Dashboards
 
-The default saved dashboard uses registry-based entity discovery during setup. Renamed entities and multiple inverters are supported. Controls include every enabled setting, and Diagnostics includes every enabled sensor once. Hidden, disabled and restored orphan entities are omitted. Customising the saved dashboard detaches it from automatic registry refreshes. See the [dashboard guide](docs/managed-dashboard.md).
+The default saved dashboard uses registry-based entity discovery during setup. Renamed entities and multiple inverters are supported. Main includes every enabled setting, and Diagnostics includes every enabled sensor once. Hidden, disabled and restored orphan entities are omitted. Customising the saved dashboard detaches it from automatic registry refreshes. See the [dashboard guide](docs/managed-dashboard.md).
 
 ### Static dashboard examples
 

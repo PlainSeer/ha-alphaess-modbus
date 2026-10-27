@@ -1,6 +1,6 @@
 # Saved AlphaESS dashboard
 
-The default dashboard has three saved Home Assistant views: Overview, Controls
+The default dashboard has three saved Home Assistant views: Main, Readings
 and Diagnostics. It does not use a custom dashboard or view strategy. Only the
 four-node power-flow diagram is a custom card; the remaining panels use native
 Home Assistant cards. A delayed flow module cannot prevent the native views
@@ -14,22 +14,28 @@ labels and unsigned diagram values make import/export and charge/discharge
 explicit. Zero and unavailable readings stop their dots. The diagram has no EV
 branch. Tapping a node opens its entity details and history.
 
-Overview also shows daily energy, solar strings, battery details and estimates.
-Controls includes all enabled settings, grouped by function; maintenance tiles
+Main keeps the four summary readings beneath the flow and includes all enabled
+settings, grouped by function. Readings contains daily energy, solar strings,
+battery details, filtered power and house-energy estimates. Maintenance tiles
 open more-info rather than running a button immediately. Diagnostics shows each
 enabled sensor and binary sensor once. Panels stack on phones and follow the
 active Home Assistant theme.
 
 ## Install and migration
 
-Update through HACS, restart Home Assistant, then refresh its frontend. During
+Update to v1.20.0 through HACS, restart Home Assistant, then refresh its frontend.
+Beta releases do not need to be enabled. HACS displays the README for the installed
+version, so an older installation may still show older previews until updated. During
 integration setup, entity registry entries are matched by platform, config-entry
 ID and stable unique ID. Renamed entities and multiple inverters are supported;
 disabled, hidden and restored orphan entries are omitted.
 
 The default URL remains `/dashboard-alphaess-native`. If it does not exist,
 setup creates an admin-only **AlphaESS** dashboard. Existing sidebar metadata
-and permissions are preserved on migration.
+and permissions are preserved on migration. In particular, an existing recognised
+**AlphaESS (Beta)** dashboard keeps that name rather than creating a second entry.
+The existing per-inverter view routes are retained even though their tab labels
+now read Main, Readings and Diagnostics.
 
 Only these existing configurations are automatically replaced:
 
