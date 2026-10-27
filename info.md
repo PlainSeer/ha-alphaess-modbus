@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> **This repository is retired. Development has moved to [PlainSeer/ha-alphaess-modbus-tcp](https://github.com/PlainSeer/ha-alphaess-modbus-tcp).**
+>
+> Use the new repository for installations, updates and support. Existing users should follow the [HACS migration guide](https://github.com/PlainSeer/ha-alphaess-modbus-tcp/blob/main/docs/hacs-migration.md). The code and releases here are retained as historical reference.
+
 # AlphaESS Modbus TCP — PlainSeer fork
 
 ![AlphaESS icon](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/custom_components/alphaess_modbus/brand/icon.png)
