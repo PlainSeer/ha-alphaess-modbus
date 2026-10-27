@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 from homeassistant.core import HomeAssistant, is_callback
 from custom_components.alphaess_modbus import dashboard_install as install
-from custom_components.alphaess_modbus.dashboard_config import build_dashboard
+from custom_components.alphaess_modbus.dashboard_config import build_dashboard, dashboard_from_registry
 from custom_components.alphaess_modbus.house_load_daily import AlphaESSHouseLoadDailySensor
 
 
@@ -43,6 +43,43 @@ def test_builder_no_strategies_renames_and_complete_entities():
 
 def test_midnight_registered_as_event_loop_callback():
     assert is_callback(AlphaESSHouseLoadDailySensor._midnight)
+
+
+def test_registry_uses_supported_device_lookup_and_preserves_device_names():
+    entities = [entity("power_grid"), entity("power_grid", entry="second")]
+    devices = {key: NS(name=key, name_by_user=f"Named {key}") for key in ("entry", "second")}
+    registry = Mock(spec=["async_get"])
+    registry.async_get.side_effect = devices.get
+    hass = NS(states=NS(get=lambda _: None))
+    with patch("custom_components.alphaess_modbus.dashboard_config.er.async_get",
+               return_value=NS(entities={e.entity_id: e for e in entities})), \
+         patch("custom_components.alphaess_modbus.dashboard_config.dr.async_get", return_value=registry):
+        result = dashboard_from_registry(hass)
+    assert result == build_dashboard(entities, devices)
+    assert [view["title"] for view in result["views"]][::3] == ["Named entry · Main", "Named second · Main"]
+    assert registry.async_get.call_count == 2
+
+
+def test_main_keeps_flow_summary_and_all_controls_readings_move_to_second_view():
+    entities = [entity(k) for k in ("soc_battery", "soh_battery", "battery_max_cell_temp",
+                "inverter_work_mode", "power_grid", "today_pv_generation", "battery_fault")]
+    entities += [entity("force_charging", "switch"), entity("force_export_power", "number"),
+                 entity("restart_ems", "button")]
+    config = build_dashboard(entities, {})
+    main, readings, diagnostics = config["views"]
+    assert [v["title"] for v in config["views"]] == ["Main", "Readings", "Diagnostics"]
+    assert [v["path"] for v in config["views"]] == ["entry-overview", "entry-controls", "entry-diagnostics"]
+    flow = main["sections"][0]["cards"][0]
+    assert flow["type"] == "custom:alphaess-power-flow"
+    assert set(flow["entities"]) >= {"soc", "health", "temperature", "mode", "grid"}
+    main_text, reading_text = json.dumps(main), json.dumps(readings)
+    for e in entities:
+        if e.domain in ("switch", "number", "button"):
+            assert main_text.count(e.entity_id) == 1
+            assert e.entity_id not in reading_text
+    assert "today_pv_generation" not in main_text
+    assert "today_pv_generation" in reading_text
+    assert json.dumps(diagnostics).count('"entity": "sensor.renamed_entry_battery_fault"') == 1
 
 
 def test_recognition_rejects_modified_beta():

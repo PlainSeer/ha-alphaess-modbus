@@ -79,12 +79,13 @@ def build_dashboard(entities, devices):
         prefix = f"{name} · " if len(groups) > 1 else ""
         bindings = {alias: indexed[("sensor", key)].entity_id for alias, key in FLOW_KEYS.items()
                     if ("sensor", key) in indexed}
-        overview = [{"type": "custom:alphaess-power-flow", "entities": bindings}]
+        flow = {"type": "custom:alphaess-power-flow", "entities": bindings}
+        readings = []
         for title, specs in OVERVIEW:
             rows = [{"entity": indexed[("sensor", key)].entity_id, "name": label}
                     for key, label in specs if ("sensor", key) in indexed]
             if rows:
-                overview.append(_entities(title, rows))
+                readings.append(_entities(title, rows))
         controls, used = [], set()
         for key, title in [("force_charging", "Force charging"), ("force_discharging", "Force discharging"),
                            ("force_export", "Force export"), ("force_import", "Force import"),
@@ -125,8 +126,9 @@ def build_dashboard(entities, devices):
                 diagnostics.append(_entities(title, rows))
             for k in matches:
                 del remaining[k]
-        views.extend([_view(prefix + "Overview", f"{entry}-overview", overview, "mdi:solar-panel"),
-                      _view(prefix + "Controls", f"{entry}-controls", controls, "mdi:tune"),
+        # Preserve the existing routes while moving the cards between saved views.
+        views.extend([_view(prefix + "Main", f"{entry}-overview", [flow, *controls], "mdi:solar-panel"),
+                      _view(prefix + "Readings", f"{entry}-controls", readings, "mdi:chart-box-outline"),
                       _view(prefix + "Diagnostics", f"{entry}-diagnostics", diagnostics, "mdi:information-outline")])
     return {"views": views} if views else None
 
@@ -135,4 +137,7 @@ def dashboard_from_registry(hass):
     """Read the registries only; never reads or writes inverter registers."""
     entities = [e for e in er.async_get(hass).entities.values()
                 if not ((state := hass.states.get(e.entity_id)) and state.attributes.get("restored"))]
-    return build_dashboard(entities, dr.async_get(hass).devices)
+    registry = dr.async_get(hass)
+    devices = {device_id: registry.async_get(device_id)
+               for device_id in {e.device_id for e in entities if e.device_id and e.platform == DOMAIN}}
+    return build_dashboard(entities, devices)

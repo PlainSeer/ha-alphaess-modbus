@@ -21,7 +21,7 @@ Home Assistant itself provides `ha-icon`, `ha-card` and the native card renderer
 `check-browser.cjs` uses a locally installed Playwright to test Chromium and
 WebKit at 320, 390, 667, 844 and 1024 pixels. It serves only the repository on a
 loopback port, blocks external browser requests, checks runtime errors and
-horizontal clipping, and writes the four README screenshots. It has no HA
+horizontal clipping, and writes the Main, Readings, Diagnostics and phone README screenshots. It has no HA
 credentials or live service endpoints.
 
 The previous strategy preview remains in `preview.js` for legacy development;
