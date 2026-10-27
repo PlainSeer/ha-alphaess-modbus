@@ -45,6 +45,28 @@ def test_midnight_registered_as_event_loop_callback():
     assert is_callback(AlphaESSHouseLoadDailySensor._midnight)
 
 
+def test_main_keeps_flow_summary_and_all_controls_readings_move_to_second_view():
+    entities = [entity(k) for k in ("soc_battery", "soh_battery", "battery_max_cell_temp",
+                "inverter_work_mode", "power_grid", "today_pv_generation", "battery_fault")]
+    entities += [entity("force_charging", "switch"), entity("force_export_power", "number"),
+                 entity("restart_ems", "button")]
+    config = build_dashboard(entities, {})
+    main, readings, diagnostics = config["views"]
+    assert [v["title"] for v in config["views"]] == ["Main", "Readings", "Diagnostics"]
+    assert [v["path"] for v in config["views"]] == ["entry-overview", "entry-controls", "entry-diagnostics"]
+    flow = main["sections"][0]["cards"][0]
+    assert flow["type"] == "custom:alphaess-power-flow"
+    assert set(flow["entities"]) >= {"soc", "health", "temperature", "mode", "grid"}
+    main_text, reading_text = json.dumps(main), json.dumps(readings)
+    for e in entities:
+        if e.domain in ("switch", "number", "button"):
+            assert main_text.count(e.entity_id) == 1
+            assert e.entity_id not in reading_text
+    assert "today_pv_generation" not in main_text
+    assert "today_pv_generation" in reading_text
+    assert json.dumps(diagnostics).count('"entity": "sensor.renamed_entry_battery_fault"') == 1
+
+
 def test_recognition_rejects_modified_beta():
     config = {"views": [{"path": page, "type": "panel", "cards": [
         {"type": "custom:alphaess-beta-live"}]} for page in ("overview", "controls", "diagnostics")]}
