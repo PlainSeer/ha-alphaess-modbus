@@ -2,5 +2,7 @@
   "name": "AlphaESS Modbus TCP",
   "content_in_root": false,
   "homeassistant": "2024.10.0",
-  "render_readme": true
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "alphaess_modbus.zip"
 }

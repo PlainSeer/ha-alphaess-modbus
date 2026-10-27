@@ -31,7 +31,7 @@ Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have
 
 ## Default saved dashboard
 
-**v1.20.0** provides three saved Home Assistant views: **Main**, **Readings** and **Diagnostics**. It does not use a custom dashboard or view strategy. Native panels stack on phones.
+**v1.20.1** provides three saved Home Assistant views: **Main**, **Readings** and **Diagnostics**. It does not use a custom dashboard or view strategy. Native panels stack on phones.
 
 **Main** keeps the four-node flow and its battery charge, health, temperature and work-mode readings together. Force charging/discharging, export/import, Peak Shaving, operating settings, schedules and maintenance are on the same page. **Readings** contains daily energy, solar strings, battery details, filtered power and house-energy estimates. Diagnostics remains separate.
 
@@ -50,7 +50,7 @@ Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have
 
 Images use the production flow card and representative native panels with example readings; they are not screenshots of a connected inverter. Native card appearance follows your HA version and theme.
 
-Update to **v1.20.0** through HACS, restart HA and refresh the frontend. A fresh installation creates **AlphaESS**. An existing recognised **AlphaESS (Beta)** dashboard is updated in place, keeping its current name, permissions and URL. No duplicate is created. Customised, YAML and unrelated dashboards are preserved. [Setup, migration and rollback](https://github.com/PlainSeer/ha-alphaess-modbus/blob/v1.20.0/docs/saved-dashboard.md).
+Update to **v1.20.1** through HACS, restart HA and refresh the frontend. A fresh installation creates **AlphaESS**. An existing recognised **AlphaESS (Beta)** dashboard is updated in place, keeping its current name, permissions and URL. No duplicate is created. Customised, YAML and unrelated dashboards are preserved. [Setup, migration and rollback](https://github.com/PlainSeer/ha-alphaess-modbus/blob/v1.20.1/docs/saved-dashboard.md).
 
 HACS displays the README from the installed version. An older installation can therefore show older previews until updated; refreshing HACS alone does not change the installed version.
 
@@ -64,4 +64,12 @@ Existing installations should update through HACS and retain their configured in
 
 ## Credits
 
+Fork maintainer: [PlainSeer](https://github.com/PlainSeer).
+
 Original Python integration: [Senalse](https://github.com/senalse/ha-alphaess-modbus). Original YAML package: [Axel Koegler / Hillview](https://projects.hillviewlodge.ie/alphaess/). AlphaESS artwork identifies supported hardware; it does not imply endorsement.
+
+## Release downloads
+
+[![Release downloads](https://img.shields.io/github/downloads/PlainSeer/ha-alphaess-modbus/total?label=release%20downloads)](https://github.com/PlainSeer/ha-alphaess-modbus/releases)
+
+Counts packaged release downloads from v1.20.1 onward, including updates and repeat downloads, rather than unique installations. Earlier source-archive downloads are not included.

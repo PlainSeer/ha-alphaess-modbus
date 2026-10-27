@@ -15,6 +15,25 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check existing release
+        id: version
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = JSON.parse(require('fs').readFileSync('custom_components/alphaess_modbus/manifest.json')).version;
+            if (context.ref !== `refs/tags/v${version}`) throw new Error('Tag does not match integration version');
+            try {
+              const {data: release} = await github.rest.repos.getReleaseByTag({...context.repo, tag: context.ref.replace('refs/tags/', '')});
+              if (!release.draft) {
+                core.setOutput('publish', 'false');
+                return;
+              }
+              if (release.target_commitish !== context.sha) throw new Error('Draft targets another commit');
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+            core.setOutput('publish', 'true');
+
       - name: Extract release notes from commit body
         id: notes
         run: |
@@ -23,8 +42,32 @@ jobs:
           echo "$body" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create release
+      - name: Build HACS package
+        if: steps.version.outputs.publish == 'true'
+        run: python3 tools/build_release.py dist/alphaess_modbus.zip
+
+      - name: Stage release with HACS package
+        if: steps.version.outputs.publish == 'true'
         uses: softprops/action-gh-release@v2
         with:
           body: ${{ steps.notes.outputs.body }}
+          target_commitish: ${{ github.sha }}
+          draft: true
+          make_latest: false
           prerelease: ${{ contains(github.ref_name, 'b') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc') }}
+          files: dist/alphaess_modbus.zip
+          fail_on_unmatched_files: true
+
+      - name: Publish after package upload
+        if: steps.version.outputs.publish == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {data: release} = await github.rest.repos.getReleaseByTag({...context.repo, tag: context.ref.replace('refs/tags/', '')});
+            if (!release.draft || release.target_commitish !== context.sha) throw new Error('Unexpected release state');
+            const asset = release.assets.find(asset => asset.name === 'alphaess_modbus.zip');
+            if (!asset || asset.state !== 'uploaded' || asset.size === 0) throw new Error('HACS package not uploaded');
+            await github.rest.repos.updateRelease({
+              ...context.repo, release_id: release.id, draft: false,
+              make_latest: release.prerelease ? 'false' : 'true'
+            });
