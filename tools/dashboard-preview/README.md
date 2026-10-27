@@ -1,12 +1,28 @@
-# Local dashboard preview
+# Saved dashboard preview
 
-Install the optional preview icons with `npm install --no-save --package-lock=false @mdi/font@7.4.47`.
-Serve the repository root with a local static server and open
-`/tools/dashboard-preview/`. This fixture imports the actual dashboard module,
-uses invented entity data, and never connects to Home Assistant. HA supplies the
-icon component in production; screenshot tooling supplies an MDI font locally.
-It is a component preview, not a complete Home Assistant installation.
+This local fixture renders the production `alphaess-power-flow` card directly.
+The surrounding native-panel previews are representative renderers, not a
+running Home Assistant frontend. All readings are examples. The fixture metadata
+contains generic entry/device IDs and no inverter serials, connection settings,
+credentials or captured household readings.
 
-Use this to check both tabs, narrow layouts, dark appearance and label overflow.
-Keep screenshots labelled as examples. Do not use screenshots of private live
-entities in public documentation.
+Generate saved views after installing Home Assistant test dependencies:
+
+```sh
+PYTHONPATH=. python tools/dashboard-preview/generate.py
+```
+
+Serve the repository root and open `/tools/dashboard-preview/index.html`.
+The preview requires the Material Design Icons 7.4.47 CSS and WOFF2 font in
+`vendor/`; download from `@mdi/font@7.4.47` and rewrite the CSS font paths to the
+same folder. Vendor files are not committed or installed by the integration.
+Home Assistant itself provides `ha-icon`, `ha-card` and the native card renderer.
+
+`check-browser.cjs` uses a locally installed Playwright to test Chromium and
+WebKit at 320, 390, 667, 844 and 1024 pixels. It serves only the repository on a
+loopback port, blocks external browser requests, checks runtime errors and
+horizontal clipping, and writes the four README screenshots. It has no HA
+credentials or live service endpoints.
+
+The previous strategy preview remains in `preview.js` for legacy development;
+the default `index.html` now previews the saved dashboard.

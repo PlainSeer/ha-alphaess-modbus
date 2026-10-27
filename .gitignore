@@ -32,3 +32,6 @@ Thumbs.db
 
 # Frontend test dependencies
 node_modules/
+node_modules
+.venv*/
+tools/dashboard-preview/vendor/

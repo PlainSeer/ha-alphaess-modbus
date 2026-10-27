@@ -1,0 +1,35 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+const dom=new JSDOM('<!doctype html><body></body>');
+for(const key of ['window','document','HTMLElement','customElements','CustomEvent'])globalThis[key]=dom.window[key];
+const {discoverDevices,darkCardConfig}=await import('../../custom_components/alphaess_modbus/frontend/alphaess-dashboard-content.js');
+function fixture(){const entities=[['power_battery','sensor'],['soc_battery','sensor'],['peak_shaving','switch'],['battery_status','sensor']].map(([key,domain])=>({entity_id:domain+'.renamed_'+key,unique_id:'entry_'+key,platform:'alphaess_modbus',config_entry_id:'entry',device_id:'device'}));const device=discoverDevices(entities,[{id:'device',name:'Example'}])[0];const card=document.createElement('alphaess-dark-dashboard');card.setConfig(darkCardConfig(device,'overview'));const h={connected:true,states:{'sensor.renamed_power_battery':{state:'-1450',attributes:{unit_of_measurement:'W'}},'sensor.renamed_soc_battery':{state:'85',attributes:{unit_of_measurement:'%'}},'switch.renamed_peak_shaving':{state:'off',attributes:{}}},callService:()=>assert.fail('Unexpected inverter command')};return {card,h,device};}
+test('dark dashboard binds renamed entities, clears unavailable readings and isolates missing ones',()=>{const {card,h}=fixture();card.hass=h;assert.equal(card.shadowRoot.querySelector('[data-bind=battery_power]').textContent,'-1.45 kW');h.states['sensor.renamed_power_battery'].state='unavailable';card.hass=h;assert.equal(card.shadowRoot.querySelector('[data-bind=battery_power]').textContent,'unavailable');h.states['sensor.alphaess_inverter_grid_power']={state:'9999',attributes:{unit_of_measurement:'W'}};card.hass=h;assert.equal(card.shadowRoot.querySelector('#systemtiles [data-bind=grid_power]').textContent,'Not found');});
+test('entity interactions only open details and the overview has no diagnostics column or inner tabs',()=>{const {card,h,device}=fixture();card.hass=h;let id;card.addEventListener('hass-more-info',e=>id=e.detail.entityId);card.shadowRoot.querySelector('[data-entity="switch.renamed_peak_shaving"]').click();assert.equal(id,'switch.renamed_peak_shaving');assert.equal(card.shadowRoot.querySelector('#overview-diagnostics'),null);assert.equal(card.shadowRoot.querySelector('nav'),null);assert.ok(card.shadowRoot.innerHTML.indexOf('Power Flow')<card.shadowRoot.innerHTML.indexOf('Energy Today'));card.setConfig(darkCardConfig(device,'diagnostics'));card.hass=h;assert.equal(card.shadowRoot.querySelector('#diagnostics').hidden,false);assert.equal(card.shadowRoot.querySelector('#overview').hidden,true);const rows=[...card.shadowRoot.querySelectorAll('#full-diagnostics [data-id]')].map(e=>e.dataset.id);assert.equal(rows.length,new Set(rows).size);});
+test('flow animation follows each signed power reading and stops at zero or unavailable',async()=>{const {flowMotion}=await import('../../custom_components/alphaess_modbus/frontend/alphaess-dark-dashboard.js');for(const kind of ['grid','battery']){assert.deepEqual(flowMotion(kind,{state:'-900'}),{moving:true,direction:'normal'});assert.deepEqual(flowMotion(kind,{state:'900'}),{moving:true,direction:'reverse'});}for(const kind of ['solar','house']){assert.equal(flowMotion(kind,{state:'900'}).direction,'normal');assert.equal(flowMotion(kind,{state:'-900'}).direction,'reverse');}for(const state of [undefined,{state:'unknown'},{state:'unavailable'},{state:'0'},{state:''}])assert.equal(flowMotion('grid',state).moving,false);});
+test('battery status codes are display-only and PV1 and PV2 stay visible while idle PV3 and PV4 recover automatically',()=>{const {card,h}=fixture();card.config.bindings['sensor.alphaess_inverter_pv_string_3_power']='sensor.third_pv';h.states['sensor.renamed_battery_status']={state:'Discharging (1)',attributes:{}};h.states['sensor.third_pv']={state:'0',attributes:{unit_of_measurement:'W'}};card.hass=h;assert.equal(card.shadowRoot.querySelector('[data-bind=battery_status]').textContent,'Discharging');assert.equal(h.states['sensor.renamed_battery_status'].state,'Discharging (1)');const tiles=card.shadowRoot.querySelectorAll('#pvtiles .tile');assert.equal(tiles[0].hidden,false);assert.equal(tiles[1].hidden,false);assert.equal(tiles[2].hidden,true);h.states['sensor.third_pv'].state='100';card.hass=h;assert.equal(tiles[2].hidden,false);});
+test('power flow shows unsigned values with small units and arrows while other readings stay signed',()=>{
+ const {card,h}=fixture();
+ card.config.bindings['sensor.alphaess_inverter_grid_power']='sensor.renamed_grid';
+ const battery=card.shadowRoot.querySelector('[data-flow-power=battery_power]');
+ const grid=card.shadowRoot.querySelector('[data-flow-power=grid_power]');
+ for(const [state,gridLabel,batteryLabel] of [['-1450','Exporting ↓','Charging ↓'],['1450','Importing ↑','Discharging ↑'],['0','Idle','Idle'],['unavailable','Unavailable','Unavailable']]){
+  h.states['sensor.renamed_grid']={state,attributes:{unit_of_measurement:'W'}};
+  h.states['sensor.renamed_power_battery'].state=state;
+  card.hass=h;
+  assert.equal(card.shadowRoot.querySelector('#flow-direction').textContent,gridLabel);
+  assert.equal(card.shadowRoot.querySelector('#flow-battery-direction').textContent,batteryLabel);
+  for(const e of [battery,grid]){
+   assert.equal(e.textContent,state==='unavailable'?'unavailable':(Math.abs(Number(state))/1000).toFixed(2)+' kW');
+   assert.equal(e.querySelectorAll('tspan').length,state==='unavailable'?0:1);
+   if(state!=='unavailable')assert.equal(e.querySelector('tspan').getAttribute('font-size'),'11');
+  }
+  assert.equal(h.states['sensor.renamed_power_battery'].state,state);
+ }
+ h.states['sensor.renamed_power_battery'].state='-1450';card.hass=h;
+ assert.equal(card.shadowRoot.querySelector('[data-bind=battery_power]').textContent,'-1.45 kW');
+ delete h.states['sensor.renamed_grid'];card.hass=h;
+ assert.equal(grid.textContent,'Not found');
+ assert.equal(card.shadowRoot.querySelector('.grid-wire').style.animationPlayState,'paused');
+});

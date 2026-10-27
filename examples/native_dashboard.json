@@ -1,0 +1,656 @@
+{
+  "views": [
+    {
+      "title": "Overview",
+      "path": "overview",
+      "icon": "mdi:solar-panel",
+      "type": "sections",
+      "max_columns": 2,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "entities",
+              "title": "Battery & Grid",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_battery_state_of_charge",
+                "sensor.alphaess_inverter_battery_power",
+                "sensor.alphaess_inverter_current_house_load",
+                "sensor.alphaess_inverter_grid_power",
+                "sensor.alphaess_inverter_battery_state_of_health",
+                "sensor.alphaess_inverter_battery_status",
+                "sensor.alphaess_inverter_inverter_work_mode",
+                "sensor.alphaess_inverter_battery_max_cell_temp"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Energy today",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_house_load_energy_today_accumulated",
+                "sensor.alphaess_inverter_today_s_pv_generation",
+                "sensor.alphaess_inverter_today_s_energy_from_grid",
+                "sensor.alphaess_inverter_today_s_energy_feed_to_grid",
+                "sensor.alphaess_inverter_today_s_battery_charged",
+                "sensor.alphaess_inverter_today_s_battery_discharged",
+                "sensor.alphaess_inverter_today_s_battery_charged_from_grid"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "House energy estimates",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_today_s_house_energy",
+                "sensor.alphaess_inverter_house_energy_since_tracking",
+                "sensor.alphaess_inverter_predbat_experimental_modbus_house_load_today"
+              ]
+            }
+          ],
+          "column_span": 1
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "entities",
+              "title": "Solar",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_current_pv_production",
+                "sensor.alphaess_inverter_pv_string_1_power",
+                "sensor.alphaess_inverter_pv_string_2_power",
+                "sensor.alphaess_inverter_pv_string_3_power",
+                "sensor.alphaess_inverter_pv_string_4_power",
+                "sensor.alphaess_inverter_active_power_pv_meter",
+                "sensor.alphaess_inverter_inverter_temperature",
+                "sensor.alphaess_inverter_total_energy_from_pv"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Battery health",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_battery_state_of_health",
+                "sensor.alphaess_inverter_battery_status",
+                "sensor.alphaess_inverter_battery_voltage",
+                "sensor.alphaess_inverter_battery_current",
+                "sensor.alphaess_inverter_battery_min_cell_temp",
+                "sensor.alphaess_inverter_battery_max_cell_temp",
+                "sensor.alphaess_inverter_battery_min_cell_voltage",
+                "sensor.alphaess_inverter_battery_max_cell_voltage"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Filtered power",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_current_house_load_filtered",
+                "sensor.alphaess_inverter_current_pv_production_filtered",
+                "sensor.alphaess_inverter_excess_power"
+              ]
+            }
+          ],
+          "column_span": 1
+        }
+      ]
+    },
+    {
+      "title": "Controls",
+      "path": "controls",
+      "icon": "mdi:tune",
+      "type": "sections",
+      "max_columns": 2,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "entities",
+              "title": "Dispatch",
+              "show_header_toggle": false,
+              "entities": [
+                {
+                  "entity": "switch.alphaess_inverter_dispatch",
+                  "name": "dispatch"
+                },
+                {
+                  "entity": "select.alphaess_inverter_dispatch_mode",
+                  "name": "dispatch mode"
+                },
+                {
+                  "entity": "number.alphaess_inverter_dispatch_power",
+                  "name": "dispatch power"
+                },
+                {
+                  "entity": "number.alphaess_inverter_dispatch_duration",
+                  "name": "dispatch duration"
+                },
+                {
+                  "entity": "number.alphaess_inverter_dispatch_stop_at_soc",
+                  "name": "dispatch stop at soc"
+                },
+                {
+                  "entity": "switch.alphaess_inverter_dispatch_pv_enabled",
+                  "name": "dispatch pv enabled"
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Peak Shaving",
+              "show_header_toggle": false,
+              "entities": [
+                {
+                  "entity": "switch.alphaess_inverter_peak_shaving",
+                  "name": "peak shaving"
+                },
+                {
+                  "entity": "binary_sensor.alphaess_inverter_peak_shaving_paused",
+                  "name": "peak shaving paused"
+                },
+                {
+                  "entity": "number.alphaess_inverter_peak_shaving_grid_import_limit",
+                  "name": "peak shaving grid import limit"
+                },
+                {
+                  "entity": "number.alphaess_inverter_peak_shaving_below_soc",
+                  "name": "peak shaving below soc"
+                },
+                {
+                  "entity": "sensor.alphaess_inverter_discharging_cutoff_soc",
+                  "name": "discharging cutoff soc"
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Force Charging",
+              "show_header_toggle": false,
+              "entities": [
+                {
+                  "entity": "switch.alphaess_inverter_force_charging",
+                  "name": "force charging"
+                },
+                {
+                  "entity": "switch.alphaess_inverter_force_charging_hold",
+                  "name": "force charging hold"
+                },
+                {
+                  "entity": "sensor.alphaess_inverter_force_charging_countdown",
+                  "name": "force charging countdown"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_charging_power",
+                  "name": "force charging power"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_charging_duration",
+                  "name": "force charging duration"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_charging_stop_at_soc",
+                  "name": "force charging stop at soc"
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Force Discharging",
+              "show_header_toggle": false,
+              "entities": [
+                {
+                  "entity": "switch.alphaess_inverter_force_discharging",
+                  "name": "force discharging"
+                },
+                {
+                  "entity": "switch.alphaess_inverter_force_discharging_hold",
+                  "name": "force discharging hold"
+                },
+                {
+                  "entity": "sensor.alphaess_inverter_force_discharging_countdown",
+                  "name": "force discharging countdown"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_discharging_power",
+                  "name": "force discharging power"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_discharging_duration",
+                  "name": "force discharging duration"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_discharging_stop_at_soc",
+                  "name": "force discharging stop at soc"
+                }
+              ]
+            }
+          ],
+          "column_span": 1
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "entities",
+              "title": "Force Export",
+              "show_header_toggle": false,
+              "entities": [
+                {
+                  "entity": "switch.alphaess_inverter_force_export",
+                  "name": "force export"
+                },
+                {
+                  "entity": "switch.alphaess_inverter_force_export_hold",
+                  "name": "force export hold"
+                },
+                {
+                  "entity": "sensor.alphaess_inverter_force_export_countdown",
+                  "name": "force export countdown"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_export_power",
+                  "name": "force export power"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_export_duration",
+                  "name": "force export duration"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_export_stop_at_soc",
+                  "name": "force export stop at soc"
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Force Import",
+              "show_header_toggle": false,
+              "entities": [
+                {
+                  "entity": "switch.alphaess_inverter_force_import",
+                  "name": "force import"
+                },
+                {
+                  "entity": "switch.alphaess_inverter_force_import_hold",
+                  "name": "force import hold"
+                },
+                {
+                  "entity": "sensor.alphaess_inverter_force_import_countdown",
+                  "name": "force import countdown"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_import_power",
+                  "name": "force import power"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_import_duration",
+                  "name": "force import duration"
+                },
+                {
+                  "entity": "number.alphaess_inverter_force_import_stop_at_soc",
+                  "name": "force import stop at soc"
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Excess Export",
+              "show_header_toggle": false,
+              "entities": [
+                {
+                  "entity": "switch.alphaess_inverter_excess_export",
+                  "name": "excess export"
+                },
+                {
+                  "entity": "binary_sensor.alphaess_inverter_excess_export_pause",
+                  "name": "excess export pause"
+                },
+                {
+                  "entity": "select.alphaess_inverter_inverter_ac_limit",
+                  "name": "inverter ac limit"
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Operating settings",
+              "show_header_toggle": false,
+              "entities": [
+                {
+                  "entity": "select.alphaess_inverter_charging_discharging_settings",
+                  "name": "charging discharging settings"
+                },
+                {
+                  "entity": "number.alphaess_inverter_charging_cutoff_soc",
+                  "name": "charging cutoff soc"
+                },
+                {
+                  "entity": "number.alphaess_inverter_discharging_cutoff_soc",
+                  "name": "discharging cutoff soc"
+                },
+                {
+                  "entity": "number.alphaess_inverter_max_feed_to_grid",
+                  "name": "max feed to grid"
+                },
+                {
+                  "entity": "number.alphaess_inverter_max_export_power",
+                  "name": "max export power"
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Scheduling",
+              "show_header_toggle": false,
+              "entities": [
+                {
+                  "entity": "time.alphaess_inverter_charging_period_1_start_time",
+                  "name": "charging period 1 start time"
+                },
+                {
+                  "entity": "time.alphaess_inverter_charging_period_1_stop_time",
+                  "name": "charging period 1 stop time"
+                },
+                {
+                  "entity": "time.alphaess_inverter_charging_period_2_start_time",
+                  "name": "charging period 2 start time"
+                },
+                {
+                  "entity": "time.alphaess_inverter_charging_period_2_stop_time",
+                  "name": "charging period 2 stop time"
+                },
+                {
+                  "entity": "time.alphaess_inverter_discharging_period_1_start_time",
+                  "name": "discharging period 1 start time"
+                },
+                {
+                  "entity": "time.alphaess_inverter_discharging_period_1_stop_time",
+                  "name": "discharging period 1 stop time"
+                },
+                {
+                  "entity": "time.alphaess_inverter_discharging_period_2_start_time",
+                  "name": "discharging period 2 start time"
+                },
+                {
+                  "entity": "time.alphaess_inverter_discharging_period_2_stop_time",
+                  "name": "discharging period 2 stop time"
+                }
+              ]
+            },
+            {
+              "type": "markdown",
+              "content": "**Maintenance:** use the standard dashboard for inverter restarts, resets and time synchronisation. These are intentionally not one-tap actions here."
+            },
+            {
+              "type": "markdown",
+              "content": "### Maintenance\nOpen a button's details before running a reset, restart or synchronisation."
+            },
+            {
+              "type": "grid",
+              "columns": 2,
+              "square": false,
+              "cards": [
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_dispatch_reset",
+                  "name": "dispatch reset",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_sync_dispatch_state",
+                  "name": "sync dispatch state",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_synchronise_date_time",
+                  "name": "synchronise date time",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_restart_ems",
+                  "name": "restart ems",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_restart_pcs",
+                  "name": "restart pcs",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "button.alphaess_inverter_reset_energy_totals",
+                  "name": "reset energy totals",
+                  "tap_action": {
+                    "action": "more-info"
+                  }
+                }
+              ]
+            }
+          ],
+          "column_span": 1
+        }
+      ]
+    },
+    {
+      "title": "Diagnostics",
+      "path": "diagnostics",
+      "icon": "mdi:information-outline",
+      "type": "sections",
+      "max_columns": 2,
+      "sections": [
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "entities",
+              "title": "Faults & warnings",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_battery_fault",
+                "sensor.alphaess_inverter_battery_warning",
+                "sensor.alphaess_inverter_fault_1",
+                "sensor.alphaess_inverter_fault_2",
+                "sensor.alphaess_inverter_inverter_fault_1",
+                "sensor.alphaess_inverter_inverter_fault_2",
+                "sensor.alphaess_inverter_inverter_warning_1",
+                "sensor.alphaess_inverter_inverter_warning_2",
+                "sensor.alphaess_inverter_system_fault",
+                "sensor.alphaess_inverter_warning_1"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Dispatch & operating",
+              "show_header_toggle": false,
+              "entities": [
+                "binary_sensor.alphaess_inverter_excess_export_pause",
+                "binary_sensor.alphaess_inverter_force_import_pause",
+                "binary_sensor.alphaess_inverter_peak_shaving_paused",
+                "sensor.alphaess_inverter_charging_cutoff_soc",
+                "sensor.alphaess_inverter_charging_period_1_start_hour",
+                "sensor.alphaess_inverter_charging_period_1_start_minute",
+                "sensor.alphaess_inverter_charging_period_1_stop_hour",
+                "sensor.alphaess_inverter_charging_period_1_stop_minute",
+                "sensor.alphaess_inverter_charging_period_2_start_hour",
+                "sensor.alphaess_inverter_charging_period_2_start_minute",
+                "sensor.alphaess_inverter_charging_period_2_stop_hour",
+                "sensor.alphaess_inverter_charging_period_2_stop_minute",
+                "sensor.alphaess_inverter_charging_time_period_control",
+                "sensor.alphaess_inverter_discharging_cutoff_soc",
+                "sensor.alphaess_inverter_discharging_period_1_start_hour",
+                "sensor.alphaess_inverter_discharging_period_1_start_minute",
+                "sensor.alphaess_inverter_discharging_period_1_stop_hour",
+                "sensor.alphaess_inverter_discharging_period_1_stop_minute",
+                "sensor.alphaess_inverter_discharging_period_2_start_hour",
+                "sensor.alphaess_inverter_discharging_period_2_start_minute",
+                "sensor.alphaess_inverter_discharging_period_2_stop_hour",
+                "sensor.alphaess_inverter_discharging_period_2_stop_minute",
+                "sensor.alphaess_inverter_dispatch_active_power",
+                "sensor.alphaess_inverter_dispatch_energy_flow_direction",
+                "sensor.alphaess_inverter_dispatch_mode",
+                "sensor.alphaess_inverter_dispatch_pv_switch",
+                "sensor.alphaess_inverter_dispatch_reactive_power",
+                "sensor.alphaess_inverter_dispatch_soc",
+                "sensor.alphaess_inverter_dispatch_start",
+                "sensor.alphaess_inverter_dispatch_time",
+                "sensor.alphaess_inverter_dispatch_time_remaining",
+                "sensor.alphaess_inverter_force_charging_countdown",
+                "sensor.alphaess_inverter_force_discharging_countdown",
+                "sensor.alphaess_inverter_force_export_countdown",
+                "sensor.alphaess_inverter_force_import_countdown",
+                "sensor.alphaess_inverter_freq_dispatch_flag"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Grid",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_grid_frequency",
+                "sensor.alphaess_inverter_grid_frequency_2",
+                "sensor.alphaess_inverter_grid_power",
+                "sensor.alphaess_inverter_grid_power_phase_a",
+                "sensor.alphaess_inverter_grid_power_phase_b",
+                "sensor.alphaess_inverter_grid_power_phase_c",
+                "sensor.alphaess_inverter_grid_voltage_phase_a",
+                "sensor.alphaess_inverter_grid_voltage_phase_b",
+                "sensor.alphaess_inverter_grid_voltage_phase_c",
+                "sensor.alphaess_inverter_max_feed_to_grid"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Inverter & system",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_arm_version",
+                "sensor.alphaess_inverter_ems_version",
+                "sensor.alphaess_inverter_inverter_arm_version",
+                "sensor.alphaess_inverter_inverter_power",
+                "sensor.alphaess_inverter_inverter_power_l1",
+                "sensor.alphaess_inverter_inverter_power_l2",
+                "sensor.alphaess_inverter_inverter_power_l3",
+                "sensor.alphaess_inverter_inverter_serial_number",
+                "sensor.alphaess_inverter_inverter_temperature",
+                "sensor.alphaess_inverter_inverter_version",
+                "sensor.alphaess_inverter_inverter_work_mode",
+                "sensor.alphaess_inverter_iso_version",
+                "sensor.alphaess_inverter_sn",
+                "sensor.alphaess_inverter_version"
+              ]
+            }
+          ],
+          "column_span": 1
+        },
+        {
+          "type": "grid",
+          "cards": [
+            {
+              "type": "entities",
+              "title": "Energy",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_house_energy_since_tracking",
+                "sensor.alphaess_inverter_house_load_energy_today_accumulated",
+                "sensor.alphaess_inverter_predbat_experimental_modbus_house_load_energy",
+                "sensor.alphaess_inverter_predbat_experimental_modbus_house_load_today",
+                "sensor.alphaess_inverter_today_s_battery_charged",
+                "sensor.alphaess_inverter_today_s_battery_charged_from_grid",
+                "sensor.alphaess_inverter_today_s_battery_discharged",
+                "sensor.alphaess_inverter_today_s_energy_feed_to_grid",
+                "sensor.alphaess_inverter_today_s_energy_from_grid",
+                "sensor.alphaess_inverter_today_s_house_energy",
+                "sensor.alphaess_inverter_today_s_pv_generation",
+                "sensor.alphaess_inverter_total_energy_charge_battery",
+                "sensor.alphaess_inverter_total_energy_charge_battery_from_grid",
+                "sensor.alphaess_inverter_total_energy_consumption_from_grid_meter",
+                "sensor.alphaess_inverter_total_energy_discharge_battery",
+                "sensor.alphaess_inverter_total_energy_feed_to_grid_meter",
+                "sensor.alphaess_inverter_total_energy_feed_to_grid_pv",
+                "sensor.alphaess_inverter_total_energy_from_pv"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Battery",
+              "show_header_toggle": false,
+              "entities": [
+                "binary_sensor.alphaess_inverter_battery_full_soc",
+                "sensor.alphaess_inverter_battery_current",
+                "sensor.alphaess_inverter_battery_max_cell_temp",
+                "sensor.alphaess_inverter_battery_max_cell_voltage",
+                "sensor.alphaess_inverter_battery_max_charge_current",
+                "sensor.alphaess_inverter_battery_max_discharge_current",
+                "sensor.alphaess_inverter_battery_min_cell_temp",
+                "sensor.alphaess_inverter_battery_min_cell_voltage",
+                "sensor.alphaess_inverter_battery_power",
+                "sensor.alphaess_inverter_battery_remaining_time",
+                "sensor.alphaess_inverter_battery_state_of_charge",
+                "sensor.alphaess_inverter_battery_state_of_health",
+                "sensor.alphaess_inverter_battery_status",
+                "sensor.alphaess_inverter_battery_voltage",
+                "sensor.alphaess_inverter_bms_version",
+                "sensor.alphaess_inverter_lmu_version"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Solar",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_active_power_pv_meter",
+                "sensor.alphaess_inverter_current_pv_production",
+                "sensor.alphaess_inverter_current_pv_production_filtered",
+                "sensor.alphaess_inverter_pv_string_1_current",
+                "sensor.alphaess_inverter_pv_string_1_power",
+                "sensor.alphaess_inverter_pv_string_1_voltage",
+                "sensor.alphaess_inverter_pv_string_2_current",
+                "sensor.alphaess_inverter_pv_string_2_power",
+                "sensor.alphaess_inverter_pv_string_2_voltage",
+                "sensor.alphaess_inverter_pv_string_3_current",
+                "sensor.alphaess_inverter_pv_string_3_power",
+                "sensor.alphaess_inverter_pv_string_3_voltage",
+                "sensor.alphaess_inverter_pv_string_4_current",
+                "sensor.alphaess_inverter_pv_string_4_power",
+                "sensor.alphaess_inverter_pv_string_4_voltage"
+              ]
+            },
+            {
+              "type": "entities",
+              "title": "Other sensors",
+              "show_header_toggle": false,
+              "entities": [
+                "sensor.alphaess_inverter_current_house_load",
+                "sensor.alphaess_inverter_current_house_load_filtered",
+                "sensor.alphaess_inverter_excess_power",
+                "sensor.alphaess_inverter_temperature",
+                "sensor.alphaess_inverter_work_mode"
+              ]
+            }
+          ],
+          "column_span": 1
+        }
+      ]
+    }
+  ]
+}

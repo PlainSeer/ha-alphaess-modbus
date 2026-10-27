@@ -29,42 +29,28 @@ These passive sensors use data already read by the integration, without adding r
 
 Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have not been adopted, and optional PV energy registers are not included.
 
-## New default dashboard · beta v1.19.3b5
+## Default saved dashboard
 
-**Beta v1.19.3b5:** the dark dashboard is now the integration's default dashboard design. It includes live readings, an animated power-flow diagram, an eight-hour solar graph, compact control rows and grouped diagnostics. Power Flow sits above Energy Today and Battery Health; diagnostics stay on their own page. Panels stack on phones.
+**v1.20.0b1:** a saved Home Assistant dashboard with **Overview**, **Controls** and **Diagnostics**. Two-column panels stack on phones. Dashboard and view strategies are no longer used by the default dashboard.
 
-Screenshots show example data.
+Overview keeps the inverter centred between Solar/Grid and Battery/Load. The four-node flow uses solid tracks and smooth power-dependent dots, a grid pylon, compact units and direction labels. Tapping a value opens its entity details. Native panels show daily energy, solar strings, battery details and estimates.
 
-![Dark AlphaESS Overview — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-overview.png)
+![AlphaESS saved Overview — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-overview.png)
 
 <details>
-<summary>Controls, Diagnostics and mobile</summary>
+<summary>Controls, Diagnostics and mobile previews</summary>
 
-![AlphaESS Controls — example data, modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-controls.png)
+![AlphaESS Controls — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-controls.png)
 
-![AlphaESS Diagnostics — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-diagnostics.png)
+![AlphaESS Diagnostics — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-diagnostics.png)
 
-<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-mobile.png" alt="AlphaESS on a 390-pixel phone viewport — example data" width="390">
+<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-mobile.png" alt="Saved AlphaESS dashboard at 390 pixels — local preview with example data" width="390">
 
 </details>
 
-Installing this beta through HACS and **restarting HA** packages the frontend and creates **AlphaESS (Beta)** in the sidebar, or migrates this fork's recognised three-view Beta dashboard. Existing managed AlphaESS strategy dashboards also use the dark design. No YAML copy/paste or separate frontend installation is needed. Refresh the frontend after restart. [Installation and migration details](https://github.com/PlainSeer/ha-alphaess-modbus/blob/v1.19.3b5/docs/managed-dashboard.md).
+Images use a local preview of the production flow card and representative native panels with example readings; they are not screenshots of a connected inverter. Native card appearance follows your HA version and theme.
 
-This makes it the default **AlphaESS integration dashboard**, without changing your personal Home Assistant landing page or overwriting unrelated dashboards. Viewing it sends no inverter commands; control rows open HA's existing details dialogs.
-
-## Stable managed dashboard
-
-Overview, Controls (including Peak Shaving) and Diagnostics, with automatic entity
-discovery and no extra custom-card dependencies. Add it once; the layout follows
-integration updates after restart and frontend refresh. Existing dashboards are
-not overwritten, and viewing it does not enable inverter controls.
-Diagnostics uses compact name/value rows in two columns of panels, stacking on phones.
-
-[Dashboard setup and replacement guide](https://github.com/PlainSeer/ha-alphaess-modbus/blob/main/docs/managed-dashboard.md).
-
-![AlphaESS Overview — example values](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-overview.png)
-
-![AlphaESS Controls — example values, all modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-controls.png)
+Update through HACS, restart HA and refresh the frontend. Setup creates **AlphaESS**, or backs up and migrates this fork's exact default strategy/recognised beta dashboard at its existing URL. Customised dashboards, YAML dashboards and unrelated dashboards are preserved. [Setup, migration and rollback](https://github.com/PlainSeer/ha-alphaess-modbus/blob/v1.20.0b1/docs/managed-dashboard.md).
 
 ## Documentation and installation
 

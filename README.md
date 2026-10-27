@@ -23,51 +23,32 @@ No cloud account required. All communication is direct to the inverter on your l
 
 ## Dashboard preview
 
-**Beta v1.19.3b5:** the dark dashboard is now the integration's default dashboard design. It includes live readings, an animated power-flow diagram, an eight-hour solar graph, compact control rows and grouped diagnostics. Power Flow sits above Energy Today and Battery Health; diagnostics stay on their own page. Panels stack on phones.
+**v1.20.0b1:** a saved Home Assistant dashboard with **Overview**, **Controls** and **Diagnostics**. Two-column panels stack on phones. Dashboard and view strategies are no longer used by the default dashboard.
 
-Screenshots show example data.
+Overview keeps the inverter centred between Solar/Grid and Battery/Load. The four-node flow uses solid tracks and smooth power-dependent dots, a grid pylon, compact units and direction labels. Tapping a value opens its entity details. Native panels show daily energy, solar strings, battery details and estimates.
 
-![Dark AlphaESS Overview — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-overview.png)
+![AlphaESS saved Overview — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-overview.png)
 
 <details>
-<summary>Controls, Diagnostics and mobile</summary>
+<summary>Controls, Diagnostics and mobile previews</summary>
 
-![AlphaESS Controls — example data, modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-controls.png)
+![AlphaESS Controls — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-controls.png)
 
-![AlphaESS Diagnostics — example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-diagnostics.png)
+![AlphaESS Diagnostics — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-diagnostics.png)
 
-<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.19.3b5/docs/images/dashboard-mobile.png" alt="AlphaESS on a 390-pixel phone viewport — example data" width="390">
+<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-mobile.png" alt="Saved AlphaESS dashboard at 390 pixels — local preview with example data" width="390">
 
 </details>
 
-Installing this beta through HACS and **restarting HA** packages the frontend and creates **AlphaESS (Beta)** in the sidebar, or migrates this fork's recognised three-view Beta dashboard. Existing managed AlphaESS strategy dashboards also use the dark design. No YAML copy/paste or separate frontend installation is needed. Refresh the frontend after restart. [Installation and migration details](https://github.com/PlainSeer/ha-alphaess-modbus/blob/v1.19.3b5/docs/managed-dashboard.md).
+Images use a local preview of the production flow card and representative native panels with example readings; they are not screenshots of a connected inverter. Native card appearance follows your HA version and theme.
 
-This makes it the default **AlphaESS integration dashboard**, without changing your personal Home Assistant landing page or overwriting unrelated dashboards. Viewing it sends no inverter commands; control rows open HA's existing details dialogs.
-
-<details>
-<summary>Stable v1.19.2 dashboard reference</summary>
-
-The optional dashboard includes **Overview**, **Controls** and **Diagnostics**, with no extra custom-card downloads. [See setup instructions](docs/managed-dashboard.md).
-Diagnostics uses compact name/value rows in two columns of panels, stacking on phones.
-
-Example values shown; the visible panels depend on your enabled entities.
-
-![Managed AlphaESS Overview — example values](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-overview.png)
-
-<details>
-<summary>See the Controls layout, including Peak Shaving</summary>
-
-![Managed AlphaESS Controls — example values, all modes off](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/main/docs/images/dashboard-controls.png)
-
-</details>
-
-</details>
+Update through HACS, restart HA and refresh the frontend. Setup creates **AlphaESS**, or backs up and migrates this fork's exact default strategy/recognised beta dashboard at its existing URL. Customised dashboards, YAML dashboards and unrelated dashboards are preserved. [Setup, migration and rollback](docs/managed-dashboard.md).
 
 ## About this fork
 
 **PlainSeer/ha-alphaess-modbus** continues from [Senalse's integration](https://github.com/senalse/ha-alphaess-modbus) at v1.14.0. The original Python integration is Senalse's work, based on [Axel Koegler's Hillview AlphaESS YAML package](https://projects.hillviewlodge.ie/alphaess/).
 
-This fork maintains the integration and selectively adopts useful HA-side improvements while preserving existing entities, configuration compatibility and working inverter controls. Upstream appears inactive: as checked on **10 October 2026**, its latest default-branch commit was [the v1.14.0 release on 7 June 2026](https://github.com/senalse/ha-alphaess-modbus/commit/3b944d6bbba8cae6ccc6f58ca99f2ec8a6e46563). This is an observation about published commits, not a claim that the author has abandoned the project. We retain the fork relationship and upstream attribution.
+This fork maintains the integration and selectively adopts useful HA-side improvements while preserving existing entities, configuration compatibility and working inverter controls. Upstream appears inactive: as checked on **27 October 2026**, its latest default-branch commit was [the v1.14.0 release on 7 June 2026](https://github.com/senalse/ha-alphaess-modbus/commit/3b944d6bbba8cae6ccc6f58ca99f2ec8a6e46563). This is an observation about published commits, not a claim that the author has abandoned the project. We retain the fork relationship and upstream attribution.
 
 ### Sensors and feature guides
 
@@ -88,11 +69,11 @@ Energy estimates can have gaps and do not automatically replace existing helpers
 
 [Optional Peak Shaving](docs/peak-shaving.md) uses existing dispatch controls when explicitly enabled. It is **off by default and after restart**, simulation-tested rather than hardware-tested, and cannot guarantee a hard import cap.
 
-This is not full Hillview parity. Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have not been adopted, and optional PV energy registers are not included. The [comparison report](docs/hillview-parity.md) records the original analysis; feature guides describe the implemented behaviour.
+This is not full Hillview parity. Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have not been adopted, and optional PV energy registers are not included. The [comparison report](docs/hillview-parity.md) includes the current Hillview v11.5 review; feature guides describe the implemented behaviour.
 
 ### Validation
 
-The test workflow covers HA 2026.10.0 / Python 3.14 and HA 2024.12.5 / Python 3.12, alongside HACS and hassfest validation. See the pull request checks for each change. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
+The test workflow covers HA 2026.10.4 / Python 3.14 and HA 2024.12.5 / Python 3.12, alongside HACS and hassfest validation. See the pull request checks for each change. These tests use an in-memory coordinator, not a connected inverter. They do not certify every inverter model, firmware, HA version or operating mode.
 
 ---
 
@@ -573,13 +554,11 @@ If two inverters are configured, the service writes the same value to all instan
 
 ## Dashboards
 
-The **optional managed dashboard** provides Overview, Controls (including Peak
-Shaving) and Diagnostics, with automatic discovery of your integration entities.
-Add it once; its layout follows future integration updates after restart and a
-frontend refresh. It does not overwrite existing dashboards or enable controls.
-No third-party cards are required. See the [setup and replacement guide](docs/managed-dashboard.md).
+The default saved dashboard uses registry-based entity discovery during setup. Renamed entities and multiple inverters are supported. Controls include every enabled setting, and Diagnostics includes every enabled sensor once. Hidden, disabled and restored orphan entities are omitted. Customising the saved dashboard detaches it from automatic registry refreshes. See the [dashboard guide](docs/managed-dashboard.md).
 
 ### Static dashboard examples
+
+The beta native dashboard is also available at [`examples/native_dashboard.json`](examples/native_dashboard.json).
 
 Example Lovelace dashboard configurations are included in the [`examples/`](examples/) folder:
 
