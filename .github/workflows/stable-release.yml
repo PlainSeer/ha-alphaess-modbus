@@ -69,15 +69,17 @@ jobs:
             }
             const tag = `v${version}`;
             if (!fs.existsSync(`.github/release-notes/${tag}.md`)) throw new Error('Missing release notes');
-            try {
-              const {data: release} = await github.rest.repos.getReleaseByTag({...context.repo, tag});
-              if (!release.draft) {
-                core.setOutput('publish', 'false');
-                return;
-              }
-              if (release.target_commitish !== context.sha) throw new Error('Draft targets another commit');
-            } catch (error) {
-              if (error.status !== 404) throw error;
+            const releases = await github.paginate(github.rest.repos.listReleases, {...context.repo, per_page: 100});
+            const matching = releases.filter(release => release.tag_name === tag);
+            if (matching.some(release => !release.draft)) {
+              core.setOutput('publish', 'false');
+              return;
+            }
+            const draft = matching.sort((a, b) => a.id - b.id)[0];
+            if (draft) {
+              await github.rest.repos.updateRelease({
+                ...context.repo, release_id: draft.id, target_commitish: context.sha
+              });
             }
             core.setOutput('publish', 'true');
             core.setOutput('tag', tag);
@@ -85,6 +87,7 @@ jobs:
         if: steps.version.outputs.publish == 'true'
         run: python3 tools/build_release.py dist/alphaess_modbus.zip
       - uses: softprops/action-gh-release@v2
+        id: upload
         if: steps.version.outputs.publish == 'true'
         with:
           tag_name: ${{ steps.version.outputs.tag }}
@@ -101,8 +104,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const {data: release} = await github.rest.repos.getReleaseByTag({
-              ...context.repo, tag: '${{ steps.version.outputs.tag }}'
+            const {data: release} = await github.rest.repos.getRelease({
+              ...context.repo, release_id: Number('${{ steps.upload.outputs.id }}')
             });
             if (!release.draft || release.target_commitish !== context.sha) throw new Error('Unexpected release state');
             const asset = release.assets.find(asset => asset.name === 'alphaess_modbus.zip');
