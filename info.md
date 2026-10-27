@@ -35,16 +35,16 @@ Hillview's Force Import pause/resume and Cutoff SoC Hold monitoring changes have
 
 Overview keeps the inverter centred between Solar/Grid and Battery/Load. The four-node flow uses solid tracks and smooth power-dependent dots, a grid pylon, compact units and direction labels. Tapping a value opens its entity details. Native panels show daily energy, solar strings, battery details and estimates.
 
-![AlphaESS saved Overview — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-overview.png)
+![AlphaESS saved Overview — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/d60f174ac61c223c8e3406b492f4e60d8d88f211/docs/images/dashboard-overview.png)
 
 <details>
 <summary>Controls, Diagnostics and mobile previews</summary>
 
-![AlphaESS Controls — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-controls.png)
+![AlphaESS Controls — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/d60f174ac61c223c8e3406b492f4e60d8d88f211/docs/images/dashboard-controls.png)
 
-![AlphaESS Diagnostics — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-diagnostics.png)
+![AlphaESS Diagnostics — local preview with example data](https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/d60f174ac61c223c8e3406b492f4e60d8d88f211/docs/images/dashboard-diagnostics.png)
 
-<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/v1.20.0b1/docs/images/dashboard-mobile.png" alt="Saved AlphaESS dashboard at 390 pixels — local preview with example data" width="390">
+<img src="https://raw.githubusercontent.com/PlainSeer/ha-alphaess-modbus/d60f174ac61c223c8e3406b492f4e60d8d88f211/docs/images/dashboard-mobile.png" alt="Saved AlphaESS dashboard at 390 pixels — local preview with example data" width="390">
 
 </details>
 
